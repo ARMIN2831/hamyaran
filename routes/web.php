@@ -1,13 +1,13 @@
 <?php
 
+use App\Http\Controllers\RoleController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
     return view('welcome');
 });
-Route::get('/home', function () {
-    return view('admin.activity.act-add');
-});
-Route::prefix('')->name('home.')->group(function () {
-    //Route::post('signup', [RegisterController::class, 'register'])->name('register');
-});
+Route::resource('users', UserController::class)->except('show');
+Route::resource('permissions', RoleController::class)->except('show','destroy');
+
+

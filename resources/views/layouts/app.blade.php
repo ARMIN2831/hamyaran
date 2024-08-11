@@ -34,25 +34,31 @@
     <!-- END: Theme CSS-->
 
     <!-- BEGIN: Page CSS-->
-    <link rel="stylesheet" type="text/css" href="{{ asset('public/css-rtl/core/menu/menu-types/vertical-menu.css?v1.2.8') }}">
+    <link rel="stylesheet" type="text/css"
+          href="{{ asset('public/css-rtl/core/menu/menu-types/vertical-menu.css?v1.2.8') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('public/css-rtl/pages/dashboard-analytics.css?v1.2.8') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('public/vendors/css/tables/datatable/datatables.min.css?v1.2.8') }}">
+    <link rel="stylesheet" type="text/css"
+          href="{{ asset('public/vendors/css/tables/datatable/datatables.min.css?v1.2.8') }}">
     <!-- END: Page CSS-->
     <link rel="stylesheet" href="{{ asset('public/css/jalali-input/js-persian-cal.css?v1.2.8') }}">
 
 
-    <link rel="stylesheet" type="text/css" href="{{ asset('public/css-rtl/core/menu/menu-types/vertical-menu.css?v1.2.8') }}">
+    <link rel="stylesheet" type="text/css"
+          href="{{ asset('public/css-rtl/core/menu/menu-types/vertical-menu.css?v1.2.8') }}">
     <link rel="stylesheet" type="text/css" href="{{ asset('public/css-rtl/pages/app-chat.?v1.2.8') }}">
 
     <script src="{{ asset('public/js/world-map.js?v1.2.8') }}"></script>
     <link href="{{ asset('public/css/world-map.css?v1.2.8') }}" rel="stylesheet">
 
     <link rel="stylesheet" type="text/css" href="{{ asset('public/style.css?v1.2.8') }}">
-    <script src="{{ asset('public/js/scripts/jalali-input/js-persian-cal.min.js?v1.2.8') }}" type="text/javascript"></script>
+    <script src="{{ asset('public/js/scripts/jalali-input/js-persian-cal.min.js?v1.2.8') }}"
+            type="text/javascript"></script>
 
 </head>
 
-<body class="vertical-layout vertical-menu-modern boxicon-layout no-card-shadow content-left-sidebar chat-application navbar-sticky footer-static  " data-open="click" data-menu="vertical-menu-modern" data-col="content-left-sidebar">
+<body
+    class="vertical-layout vertical-menu-modern boxicon-layout no-card-shadow content-left-sidebar chat-application navbar-sticky footer-static  "
+    data-open="click" data-menu="vertical-menu-modern" data-col="content-left-sidebar">
 
 <!-- BEGIN: Header-->
 <div class="header-navbar-shadow"></div>
@@ -110,88 +116,188 @@
     </div>
 </nav>
 
+@if ($errors->any())
+    <div style="position: fixed; z-index: 10000; margin-right: 260px; margin-top: 15px; padding-right: 2.2rem;">
+        <div id="error-alert">
+            <div>
+                @foreach ($errors->all() as $error)
+                    <div class="alert alert-danger fade-in">{{ $error }}</div>
+                @endforeach
+            </div>
+        </div>
+    </div>
+
+    <style>
+        /* انیمیشن برای محو شدن خطاها */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeOut {
+            from {
+                opacity: 1;
+            }
+            to {
+                opacity: 0;
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .fade-out {
+            animation: fadeOut 1s ease-in-out;
+            opacity: 0;
+        }
+
+        .alert {
+            margin-bottom: 0;
+            margin-top: 10px;
+            padding: 15px;
+            border-radius: 4px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            setTimeout(function () {
+                $('#error-alert .alert').addClass('fade-out');
+            }, 3000); // شروع انیمیشن محو شدن بعد از 3 ثانیه
+
+            setTimeout(function () {
+                $('#error-alert').remove(); // حذف کامل بعد از اتمام انیمیشن
+            }, 4000); // 1 ثانیه زمان برای انیمیشن محو شدن
+        });
+    </script>
+@endif
 
 <!--<div class="main-menu menu-fixed menu-light menu-accordion menu-shadow" data-scroll-to-active="true">-->
-<div class="main-menu menu-fixed menu-dark  menu-accordion menu-shadow" data-scroll-to-active="true" style="margin: 15px 15px 15px auto; border-radius: 1.5rem; height: calc(-30px + 100vh); touch-action: none; user-select: none;">
+<div class="main-menu menu-fixed menu-dark  menu-accordion menu-shadow" data-scroll-to-active="true"
+     style="margin: 15px 15px 15px auto; border-radius: 1.5rem; height: calc(-30px + 100vh); touch-action: none; user-select: none;">
     <div class="navbar-header">
         <ul class="nav navbar-nav flex-row">
             <li class="nav-item mr-auto"><a class="navbar-brand" onclick="reload()">
-                    <div class="brand-logo"><img class="logo" src="{{ asset('public/img/logo.png') }}" /></div>
+                    <div class="brand-logo"><img class="logo" src="{{ asset('public/img/logo.png') }}"/></div>
                     <h2 class="brand-text mb-0">همیاران ملل</h2>
                 </a></li>
-            <li class="nav-item nav-toggle"><a class="nav-link modern-nav-toggle pr-0" data-toggle="collapse"><i class="bx bx-x d-block d-xl-none font-medium-4 white toggle-icon"></i><i class="toggle-icon bx bx-disc font-medium-4 d-none d-xl-block collapse-toggle-icon white" data-ticon="bx-disc"></i></a></li>
+            <li class="nav-item nav-toggle"><a class="nav-link modern-nav-toggle pr-0" data-toggle="collapse"><i
+                        class="bx bx-x d-block d-xl-none font-medium-4 white toggle-icon"></i><i
+                        class="toggle-icon bx bx-disc font-medium-4 d-none d-xl-block collapse-toggle-icon white"
+                        data-ticon="bx-disc"></i></a></li>
         </ul>
     </div>
     <div class="shadow-bottom"></div>
     <div class="main-menu-content">
         <ul class="navigation navigation-main" id="main-menu-navigation" data-menu="menu-navigation" data-icon-style="">
 
-                <li class="nav-item"><a href="{{ env('APP_URL') }}/#"><i class="bx bx-pie-chart"></i><span class="menu-title" data-i18n="Dashboard">گزارشات</span>
-                    </a>
-                    <ul class="menu-content">
-                        <li><a href="{{ env('APP_URL') }}/chart/"><i class="bx bx-right-arrow-alt"></i><span class="menu-item" data-i18n="eCommerce">نمودار دانشجویان</span></a></li>
-                        <li><a href="{{ env('APP_URL') }}/world-map/"><i class="bx bx-right-arrow-alt"></i><span class="menu-item" data-i18n="eCommerce">توزیع پراکندگی</span></a></li>
-                        <li><a href="{{ env('APP_URL') }}/export/"><i class="bx bx-right-arrow-alt"></i><span class="menu-item" data-i18n="eCommerce">گزارش‌گیری</span></a></li>
-                        <li><a href="{{ env('APP_URL') }}/report/"><i class="bx bx-right-arrow-alt"></i><span class="menu-item" data-i18n="eCommerce">گزارشات سامانه</span></a></li>
-                    </ul>
-                </li>
+            <li class="nav-item"><a href="{{ env('APP_URL') }}/#"><i class="bx bx-pie-chart"></i><span
+                        class="menu-title" data-i18n="Dashboard">گزارشات</span>
+                </a>
+                <ul class="menu-content">
+                    <li><a href="{{ env('APP_URL') }}/chart/"><i class="bx bx-right-arrow-alt"></i><span
+                                class="menu-item" data-i18n="eCommerce">نمودار دانشجویان</span></a></li>
+                    <li><a href="{{ env('APP_URL') }}/world-map/"><i class="bx bx-right-arrow-alt"></i><span
+                                class="menu-item" data-i18n="eCommerce">توزیع پراکندگی</span></a></li>
+                    <li><a href="{{ env('APP_URL') }}/export/"><i class="bx bx-right-arrow-alt"></i><span
+                                class="menu-item" data-i18n="eCommerce">گزارش‌گیری</span></a></li>
+                    <li><a href="{{ env('APP_URL') }}/report/"><i class="bx bx-right-arrow-alt"></i><span
+                                class="menu-item" data-i18n="eCommerce">گزارشات سامانه</span></a></li>
+                </ul>
+            </li>
             <li class=" navigation-header"><span>دسترسی‌ها</span></li>
-                    <li class="nav-item"><a href="#"><i class="bx bxs-bulb"></i><span class="menu-title" data-i18n="Invoice">فعالیت‌های دانشجویان</span></a>
-                        <ul class="menu-content">
-                            <li><a href="{{ env('APP_URL') }}/act/add"><i class="bx bx-left-arrow-alt"></i><span class="menu-item" data-i18n="Invoice List">افزودن فعالیت</span></a></li>
-                            <li><a href="{{ env('APP_URL') }}/act/edit"><i class="bx bx-left-arrow-alt"></i><span class="menu-item" data-i18n="Invoice List">ویرایش فعالیت‌ها</span></a></li>
-                        </ul>
+            <li class="nav-item"><a href="#"><i class="bx bxs-bulb"></i><span class="menu-title" data-i18n="Invoice">فعالیت‌های دانشجویان</span></a>
+                <ul class="menu-content">
+                    <li><a href="{{ env('APP_URL') }}/act/add"><i class="bx bx-left-arrow-alt"></i><span
+                                class="menu-item" data-i18n="Invoice List">افزودن فعالیت</span></a></li>
+                    <li><a href="{{ env('APP_URL') }}/act/edit"><i class="bx bx-left-arrow-alt"></i><span
+                                class="menu-item" data-i18n="Invoice List">ویرایش فعالیت‌ها</span></a></li>
+                </ul>
+            </li>
+
+            <li class="nav-item"><a href="#"><i class="bx bxs-user"></i><span class="menu-title" data-i18n="Invoice">دانشجویان</span></a>
+                <ul class="menu-content">
+                    <li><a href="{{ env('APP_URL') }}/stu/add"><i class="bx bx-left-arrow-alt"></i><span
+                                class="menu-item" data-i18n="Invoice List">افزودن دانشجو</span></a></li>
+                    <li><a href="{{ env('APP_URL') }}/stu/excel"><i class="bx bx-left-arrow-alt"></i><span
+                                class="menu-item" data-i18n="Invoice List">افزودن دانشجو از اکسل</span></a></li>
+                    <li><a href="{{ env('APP_URL') }}/stu/edit"><i class="bx bx-left-arrow-alt"></i><span
+                                class="menu-item" data-i18n="Invoice List">ویرایش دانشجویان</span></a></li>
+                </ul>
+            </li>
+
+            <li class="nav-item"><a href="#"><i class="bx bxs-bank"></i><span class="menu-title" data-i18n="Invoice">موسسات</span></a>
+                <ul class="menu-content">
+                    <li><a href="{{ env('APP_URL') }}/ins/add"><i class="bx bx-left-arrow-alt"></i><span
+                                class="menu-item" data-i18n="Invoice List">افزودن موسسه</span></a></li>
+                    <li><a href="{{ env('APP_URL') }}/ins/excel"><i class="bx bx-left-arrow-alt"></i><span
+                                class="menu-item" data-i18n="Invoice List">افزودن موسسه از اکسل</span></a></li>
+                    <li><a href="{{ env('APP_URL') }}/ins/edit"><i class="bx bx-left-arrow-alt"></i><span
+                                class="menu-item" data-i18n="Invoice List">ویرایش موسسات</span></a></li>
+                </ul>
+            </li>
+
+            <li class="nav-item"><a href="#"><i class="bx bxs-group"></i><span class="menu-title" data-i18n="Invoice">کلاس‌ها</span></a>
+                <ul class="menu-content">
+                    <li><a href="{{ env('APP_URL') }}/teachClass/add"><i class="bx bx-left-arrow-alt"></i><span
+                                class="menu-item" data-i18n="Invoice List">افزودن کلاس</span></a></li>
+                    <li><a href="{{ env('APP_URL') }}/teachClass/edit"><i class="bx bx-left-arrow-alt"></i><span
+                                class="menu-item" data-i18n="Invoice List">ویرایش کلاس</span></a></li>
+                </ul>
+            </li>
+
+            <li class="nav-item"><a href="#"><i class="bx bxs-book"></i><span class="menu-title" data-i18n="Invoice">دوره‌ها</span></a>
+                <ul class="menu-content">
+                    <li><a href="{{ env('APP_URL') }}/course/add"><i class="bx bx-left-arrow-alt"></i><span
+                                class="menu-item" data-i18n="Invoice List">افزودن دوره</span></a></li>
+                    <li><a href="{{ env('APP_URL') }}/course/edit"><i class="bx bx-left-arrow-alt"></i><span
+                                class="menu-item" data-i18n="Invoice List">ویرایش دوره</span></a></li>
+                </ul>
+            </li>
+
+            <li class="nav-item"><a href="#"><i class="bx bxs-school"></i><span class="menu-title" data-i18n="Invoice">مجتمع‌ها</span></a>
+                <ul class="menu-content">
+                    <li><a href="{{ env('APP_URL') }}/convene/add"><i class="bx bx-left-arrow-alt"></i><span
+                                class="menu-item" data-i18n="Invoice List">افزودن مجتمع</span></a></li>
+                    <li><a href="{{ env('APP_URL') }}/convene/edit"><i class="bx bx-left-arrow-alt"></i><span
+                                class="menu-item" data-i18n="Invoice List">ویرایش مجتمع</span></a></li>
+                </ul>
+            </li>
+
+            <li class="nav-item"><a href="#"><i class="bx bx-user-plus"></i><span class="menu-title"
+                                                                                  data-i18n="Invoice">مدیریت کاربران</span></a>
+                <ul class="menu-content">
+
+                    <li><a href="{{ route('users.create') }}"><i class="bx bx-left-arrow-alt"></i><span
+                                class="menu-item" data-i18n="Invoice List">افزودن مدیرکل</span></a></li>
+                    <li><a href="{{ route('users.create') }}"><i class="bx bx-left-arrow-alt"></i><span
+                                class="menu-item" data-i18n="Invoice List">افزودن مدیر</span></a></li>
+                    <li><a href="{{ route('users.create') }}"><i class="bx bx-left-arrow-alt"></i><span
+                                class="menu-item" data-i18n="Invoice List">افزودن پشتیبان</span></a></li>
+
+                    <li class="nav-item"><a href="{{ route('users.index') }}"><i class="bx bx-user-check"></i><span
+                                class="menu-title" data-i18n="Chat">ویرایش مدیر/پشتیبان</span></a>
                     </li>
+                </ul>
+            </li>
 
-                    <li class="nav-item"><a href="#"><i class="bx bxs-user"></i><span class="menu-title" data-i18n="Invoice">دانشجویان</span></a>
-                        <ul class="menu-content">
-                    <li><a href="{{ env('APP_URL') }}/stu/add"><i class="bx bx-left-arrow-alt"></i><span class="menu-item" data-i18n="Invoice List">افزودن دانشجو</span></a></li>
-                    <li><a href="{{ env('APP_URL') }}/stu/excel"><i class="bx bx-left-arrow-alt"></i><span class="menu-item" data-i18n="Invoice List">افزودن دانشجو از اکسل</span></a></li>
-                    <li><a href="{{ env('APP_URL') }}/stu/edit"><i class="bx bx-left-arrow-alt"></i><span class="menu-item" data-i18n="Invoice List">ویرایش دانشجویان</span></a></li>
-                    </ul>
+
+            <li class="nav-item"><a href="#"><i class="bx bx-user-plus"></i><span class="menu-title" data-i18n="Invoice">مدیریت پرمیشن ها</span></a>
+                <ul class="menu-content">
+
+                    <li><a href="{{ route('permissions.create') }}"><i class="bx bx-left-arrow-alt"></i><span class="menu-item" data-i18n="Invoice List">افزودن پرمیشن</span></a></li>
+
+                    <li class="nav-item"><a href="{{ route('permissions.index') }}"><i class="bx bx-user-check"></i><span class="menu-title" data-i18n="Chat">ویرایش پرمیشن</span></a>
                     </li>
-
-                    <li class="nav-item"><a href="#"><i class="bx bxs-bank"></i><span class="menu-title" data-i18n="Invoice">موسسات</span></a>
-                        <ul class="menu-content">
-                            <li><a href="{{ env('APP_URL') }}/ins/add"><i class="bx bx-left-arrow-alt"></i><span class="menu-item" data-i18n="Invoice List">افزودن موسسه</span></a></li>
-                            <li><a href="{{ env('APP_URL') }}/ins/excel"><i class="bx bx-left-arrow-alt"></i><span class="menu-item" data-i18n="Invoice List">افزودن موسسه از اکسل</span></a></li>
-                            <li><a href="{{ env('APP_URL') }}/ins/edit"><i class="bx bx-left-arrow-alt"></i><span class="menu-item" data-i18n="Invoice List">ویرایش موسسات</span></a></li>
-                        </ul>
-                    </li>
-
-                    <li class="nav-item"><a href="#"><i class="bx bxs-group"></i><span class="menu-title" data-i18n="Invoice">کلاس‌ها</span></a>
-                        <ul class="menu-content">
-                            <li><a href="{{ env('APP_URL') }}/teachClass/add"><i class="bx bx-left-arrow-alt"></i><span class="menu-item" data-i18n="Invoice List">افزودن کلاس</span></a></li>
-                            <li><a href="{{ env('APP_URL') }}/teachClass/edit"><i class="bx bx-left-arrow-alt"></i><span class="menu-item" data-i18n="Invoice List">ویرایش کلاس</span></a></li>
-                        </ul>
-                    </li>
-
-                    <li class="nav-item"><a href="#"><i class="bx bxs-book"></i><span class="menu-title" data-i18n="Invoice">دوره‌ها</span></a>
-                        <ul class="menu-content">
-                            <li><a href="{{ env('APP_URL') }}/course/add"><i class="bx bx-left-arrow-alt"></i><span class="menu-item" data-i18n="Invoice List">افزودن دوره</span></a></li>
-                            <li><a href="{{ env('APP_URL') }}/course/edit"><i class="bx bx-left-arrow-alt"></i><span class="menu-item" data-i18n="Invoice List">ویرایش دوره</span></a></li>
-                        </ul>
-                    </li>
-
-                    <li class="nav-item"><a href="#"><i class="bx bxs-school"></i><span class="menu-title" data-i18n="Invoice">مجتمع‌ها</span></a>
-                        <ul class="menu-content">
-                            <li><a href="{{ env('APP_URL') }}/convene/add"><i class="bx bx-left-arrow-alt"></i><span class="menu-item" data-i18n="Invoice List">افزودن مجتمع</span></a></li>
-                            <li><a href="{{ env('APP_URL') }}/convene/edit"><i class="bx bx-left-arrow-alt"></i><span class="menu-item" data-i18n="Invoice List">ویرایش مجتمع</span></a></li>
-                        </ul>
-                    </li>
-
-                    <li class="nav-item"><a href="#"><i class="bx bx-user-plus"></i><span class="menu-title" data-i18n="Invoice">مدیریت کاربران</span></a>
-                        <ul class="menu-content">
-
-                        <li><a href="{{ env('APP_URL') }}/manager/add/admin"><i class="bx bx-left-arrow-alt"></i><span class="menu-item" data-i18n="Invoice List">افزودن مدیرکل</span></a></li>
-                            <li><a href="{{ env('APP_URL') }}/manager/add/manager"><i class="bx bx-left-arrow-alt"></i><span class="menu-item" data-i18n="Invoice List">افزودن مدیر</span></a></li>
-                            <li><a href="{{ env('APP_URL') }}/manager/add/supporter"><i class="bx bx-left-arrow-alt"></i><span class="menu-item" data-i18n="Invoice List">افزودن پشتیبان</span></a></li>
-                            <li><a href="{{ env('APP_URL') }}/manager/add/supporter"><i class="bx bx-left-arrow-alt"></i><span class="menu-item" data-i18n="Invoice List">افزودن پشتیبان</span></a></li>
-
-                        <li class="nav-item"><a href="'.baseDir.'/manager/edit"><i class="bx bx-user-check"></i><span class="menu-title" data-i18n="Chat">ویرایش مدیر/پشتیبان</span></a>
-                        </li>
-                    </ul>
-                    </li>
+                </ul>
+            </li>
 
             <li class=" navigation-header"><span>امکانات</span></li>
             <li class="nav-item"><a href="#"><i class="bx bxs-chat"></i><span class="menu-title" data-i18n="Invoice">تیکت‌های پشتیبانی</span>
@@ -204,23 +310,34 @@
                     ?>
                 </a>
                 <ul class="menu-content">
-                    <li><a href="{{ env('APP_URL') }}/ticket/add/"><i class="bx bx-left-arrow-alt"></i><span class="menu-item" data-i18n="Invoice List">ایجاد تیکت</span></a></li>
-                    <li><a href="{{ env('APP_URL') }}/ticket/"><i class="bx bx-left-arrow-alt"></i><span class="menu-item" data-i18n="Invoice List">مشاهده پیام‌ها</span></a></li>
-                    <li><a href="'.baseDir.'/ticket-manage/"><i class="bx bx-left-arrow-alt"></i><span class="menu-item" data-i18n="Invoice List">مدیریت تیکت‌ها</span></a></li>
+                    <li><a href="{{ env('APP_URL') }}/ticket/add/"><i class="bx bx-left-arrow-alt"></i><span
+                                class="menu-item" data-i18n="Invoice List">ایجاد تیکت</span></a></li>
+                    <li><a href="{{ env('APP_URL') }}/ticket/"><i class="bx bx-left-arrow-alt"></i><span
+                                class="menu-item" data-i18n="Invoice List">مشاهده پیام‌ها</span></a></li>
+                    <li><a href="'.baseDir.'/ticket-manage/"><i class="bx bx-left-arrow-alt"></i><span class="menu-item"
+                                                                                                       data-i18n="Invoice List">مدیریت تیکت‌ها</span></a>
+                    </li>
                 </ul>
             </li>
-            <li class="nav-item"><a href="#"><i class="bx bx-user-circle"></i><span class="menu-title" data-i18n="Invoice">پروفایل کاربر</span></a>
+            <li class="nav-item"><a href="#"><i class="bx bx-user-circle"></i><span class="menu-title"
+                                                                                    data-i18n="Invoice">پروفایل کاربر</span></a>
                 <ul class="menu-content">
-                    <li><a href="{{ env('APP_URL') }}/profile/edit/"><i class="bx bx-left-arrow-alt"></i><span class="menu-item" data-i18n="Invoice List">ویرایش مشخصات</span></a></li>
-                    <li><a href="{{ env('APP_URL') }}/profile/change-password/"><i class="bx bx-left-arrow-alt"></i><span class="menu-item" data-i18n="Invoice List">تغییر رمز ورود</span></a></li>
+                    <li><a href="{{ env('APP_URL') }}/profile/edit/"><i class="bx bx-left-arrow-alt"></i><span
+                                class="menu-item" data-i18n="Invoice List">ویرایش مشخصات</span></a></li>
+                    <li><a href="{{ env('APP_URL') }}/profile/change-password/"><i
+                                class="bx bx-left-arrow-alt"></i><span class="menu-item" data-i18n="Invoice List">تغییر رمز ورود</span></a>
+                    </li>
                 </ul>
             </li>
 
             <li class="nav-item"><a href="#"><i class="bx bxs-wrench"></i><span class="menu-title" data-i18n="Invoice">تنظیمات سامانه</span></a>
                 <ul class="menu-content">
-                    <li><a href="{{ env('APP_URL') }}/setting/db/"><i class="bx bx-left-arrow-alt"></i><span class="menu-item" data-i18n="Invoice List">پایگاه داده</span></a></li>
-                    <li><a href="{{ env('APP_URL') }}/setting/setdata/"><i class="bx bx-left-arrow-alt"></i><span class="menu-item" data-i18n="Invoice List">ورودی اطلاعات</span></a></li>
-                    <li><a href="{{ env('APP_URL') }}/setting/email/"><i class="bx bx-left-arrow-alt"></i><span class="menu-item" data-i18n="Invoice List">ایمیل</span></a></li>
+                    <li><a href="{{ env('APP_URL') }}/setting/db/"><i class="bx bx-left-arrow-alt"></i><span
+                                class="menu-item" data-i18n="Invoice List">پایگاه داده</span></a></li>
+                    <li><a href="{{ env('APP_URL') }}/setting/setdata/"><i class="bx bx-left-arrow-alt"></i><span
+                                class="menu-item" data-i18n="Invoice List">ورودی اطلاعات</span></a></li>
+                    <li><a href="{{ env('APP_URL') }}/setting/email/"><i class="bx bx-left-arrow-alt"></i><span
+                                class="menu-item" data-i18n="Invoice List">ایمیل</span></a></li>
                 </ul>
             </li>
 
@@ -273,7 +390,7 @@
 
 <!-- END: Page JS-->
 
-
+{{--
 <!-- BEGIN: Page Vendor JS-->
 <script src="{{ asset('public/vendors/js/tables/datatable/datatables.min.js?v1.2.8') }}"></script>
 <script src="{{ asset('public/vendors/js/tables/datatable/dataTables.bootstrap4.min.js?v1.2.8') }}"></script>
@@ -291,7 +408,7 @@
 
 <script src="{{ asset('public/vendors/js/charts/chart.min.js?v1.2.8') }}"></script>
 <script src="{{ asset('public/vendors/js/charts/chart-chartjs.js?v1.2.8') }}"></script>
-
+--}}
 
 
 </body>
