@@ -208,9 +208,9 @@
 
             <li class="nav-item"><a href="#"><i class="bx bxs-school"></i><span class="menu-title" data-i18n="Invoice">مجتمع‌ها</span></a>
                 <ul class="menu-content">
-                    <li><a href="{{ env('APP_URL') }}/convene/add"><i class="bx bx-left-arrow-alt"></i><span
+                    <li><a href="{{ route('convenes.create') }}"><i class="bx bx-left-arrow-alt"></i><span
                                 class="menu-item" data-i18n="Invoice List">افزودن مجتمع</span></a></li>
-                    <li><a href="{{ env('APP_URL') }}/convene/edit"><i class="bx bx-left-arrow-alt"></i><span
+                    <li><a href="{{ route('convenes.index') }}"><i class="bx bx-left-arrow-alt"></i><span
                                 class="menu-item" data-i18n="Invoice List">ویرایش مجتمع</span></a></li>
                 </ul>
             </li>
@@ -220,11 +220,7 @@
                 <ul class="menu-content">
 
                     <li><a href="{{ route('users.create') }}"><i class="bx bx-left-arrow-alt"></i><span
-                                class="menu-item" data-i18n="Invoice List">افزودن مدیرکل</span></a></li>
-                    <li><a href="{{ route('users.create') }}"><i class="bx bx-left-arrow-alt"></i><span
-                                class="menu-item" data-i18n="Invoice List">افزودن مدیر</span></a></li>
-                    <li><a href="{{ route('users.create') }}"><i class="bx bx-left-arrow-alt"></i><span
-                                class="menu-item" data-i18n="Invoice List">افزودن پشتیبان</span></a></li>
+                                class="menu-item" data-i18n="Invoice List">افزودن کاربر</span></a></li>
 
                     <li class="nav-item"><a href="{{ route('users.index') }}"><i class="bx bx-user-check"></i><span
                                 class="menu-title" data-i18n="Chat">ویرایش مدیر/پشتیبان</span></a>

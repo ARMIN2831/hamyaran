@@ -41,11 +41,11 @@
                                         <div class="col-12">
                                             <fieldset class="form-group">
                                                 <label for="type"> نوع مدیران </label>
-                                                <select name="type" id="type" class="custom-select" onchange="submitForm()">
-                                                    <option value="">همه مدیران</option>
-                                                    <option value="مدیرکل">مدیرکل</option>
-                                                    <option value="مدیر">مدیر</option>
-                                                    <option value="پشتیبان">پشتیبان</option>
+                                                <select name="level" id="type" class="custom-select" onchange="submitForm()">
+                                                    <option value="" {{ request('level') == '' ? 'selected' : '' }}>همه مدیران</option>
+                                                    <option value="مدیرکل" {{ request('level') == 'مدیرکل' ? 'selected' : '' }}>مدیرکل</option>
+                                                    <option value="مدیر" {{ request('level') == 'مدیر' ? 'selected' : '' }}>مدیر</option>
+                                                    <option value="پشتیبان" {{ request('level') == 'پشتیبان' ? 'selected' : '' }}>پشتیبان</option>
                                                 </select>
                                             </fieldset>
                                         </div>
@@ -57,10 +57,10 @@
                                                 <label style="display: flex; flex-direction: row; align-items: center">
                                                     نمایش
                                                     <select name="pagesize" aria-controls="DataTables_Table_0" class="custom-select custom-select-sm form-control form-control-sm" onchange="submitForm()">
-                                                        <option value="10">10</option>
-                                                        <option value="25">25</option>
-                                                        <option value="50">50</option>
-                                                        <option value="100">100</option>
+                                                        <option value="10" {{ request('pagesize') == '10' ? 'selected' : '' }}>10</option>
+                                                        <option value="25" {{ request('pagesize') == '25' ? 'selected' : '' }}>25</option>
+                                                        <option value="50" {{ request('pagesize') == '50' ? 'selected' : '' }}>50</option>
+                                                        <option value="100" {{ request('pagesize') == '100' ? 'selected' : '' }}>100</option>
                                                     </select>
                                                     ردیف
                                                 </label>
@@ -70,7 +70,7 @@
                                             <div id="DataTables_Table_0_filter" class="dataTables_filter">
                                                 <label style="display: flex; flex-direction: row; align-items: center">
                                                     جست‌وجو:
-                                                    <input name="search" style="width: 120px; margin: 0 10px" type="search" class="form-control form-control-sm" placeholder="" aria-controls="DataTables_Table_0" oninput="submitForm()">
+                                                    <input name="search" style="width: 120px; margin: 0 10px" type="search" class="form-control form-control-sm" placeholder="" aria-controls="DataTables_Table_0" value="{{ request('search') }}">
                                                 </label>
                                             </div>
                                         </div>
@@ -78,6 +78,13 @@
                                 </form>
 
                                 <script>
+                                    let timeout = null;
+                                    document.getElementById('searchInput').addEventListener('input', function () {
+                                        clearTimeout(timeout);
+                                        timeout = setTimeout(function () {
+                                            document.getElementById('filterForm').submit();
+                                        }, 1000);
+                                    });
                                     function submitForm() {
                                         document.getElementById('filterForm').submit();
                                     }
@@ -124,7 +131,7 @@
                                                 @endforeach
                                             </table>
                                         </div>
-                                        {{ $user->appends(request()->query())->links() }}
+                                        {{ $user->appends(request()->query())->links('pagination::bootstrap-4') }}
                                     </div>
                                 </div>
                             </div>

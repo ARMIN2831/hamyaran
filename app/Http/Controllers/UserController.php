@@ -11,7 +11,6 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
@@ -20,8 +19,8 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        if (auth()->user()->can('view users')) {
-            $filter = $this->doFilter(User::query(), $request, ['id', 'name']);
+        if (auth()->user()->can('view user')) {
+            $filter = $this->doFilter(User::query(), $request, ['id', 'name'], ['level']);
             $user = $filter[0];
             return view('admin.user.index', compact('user'));
         }
@@ -34,7 +33,7 @@ class UserController extends Controller
     public function create()
     {
         if (auth()->user()->can('create user')) {
-            $permissions = Permission::all();
+            $permissions = Permission::get();
             return view('admin.user.create', compact('permissions'));
         }
         return redirect()->route('dashboard')->with('failed','شما به این بخش دسترسی ندارید!');

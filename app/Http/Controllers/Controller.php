@@ -8,7 +8,7 @@ use Throwable;
 abstract class Controller
 {
 
-    function doFilter($data, $request, $arr)
+    function doFilter($data, $request, $arr, $params = [])
     {
         if ($id = $request->id) {
             $data = $data->where('id', $id);
@@ -21,6 +21,11 @@ abstract class Controller
                     }
                 });
             }
+            if ($params)
+                foreach ($params as $param)
+                    if ($request->$param || $request->$param != '')
+                        $data->where($param,$request->$param);
+
 
             //$data = $data->latest();
 

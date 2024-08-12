@@ -15,7 +15,7 @@ class RoleController extends Controller
     public function index(Request $request)
     {
         if (auth()->user()->can('view permission')) {
-            $filter = $this->doFilter(Permission::query(), $request, ['id','name']);
+            $filter = $this->doFilter(Permission::query(), $request, ['id','title']);
             $permissions = $filter[0];
             return view('admin.permission.index',compact('permissions'));
         }
