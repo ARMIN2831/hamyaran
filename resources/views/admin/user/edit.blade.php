@@ -61,6 +61,17 @@
                                         </div>
                                         <div class="col-md-6">
                                             <fieldset class="form-group">
+                                                <label for="level"> سطح </label>
+                                                <select style="width: 100%;margin-right: 0" name="level" id="level" class="select2 form-control">
+                                                    <option value="">انتخاب کنید</option>
+                                                    <option @if('مدیرکل' == $user->level) selected="selected" @endif value="مدیرکل">مدیرکل</option>
+                                                    <option @if('مدیر' == $user->level) selected="selected" @endif value="مدیر">مدیر</option>
+                                                    <option @if('پشتیبان' == $user->level) selected="selected" @endif value="پشتیبان">پشتیبان</option>
+                                                </select>
+                                            </fieldset>
+                                        </div>
+                                        <div class="col-md-12" style="display: grid;grid-column: 4">
+                                            <fieldset class="form-group">
                                                 <label> دسترسی‌ها </label>
                                                 <br>
                                                 @foreach($permissions as $permission)

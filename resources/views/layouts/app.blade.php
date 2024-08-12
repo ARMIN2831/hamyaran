@@ -1,61 +1,5 @@
-<!DOCTYPE html>
-<html lang="fa">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>{{ config('app.name', 'Laravel') }}</title>
-    <link rel="shortcut icon" href="{{ asset('public/img/favicon.ico') }}" type="image/x-icon">
-    <meta name="title" content="{{ config('app.name', 'Laravel') }}">
 
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <meta http-equiv="Content-Language" content="fa">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="language" content="fa">
-    <script src="https://www.google.com/recaptcha/api.js?render=6Lf60MocAAAAALwypX7On5EBN8IzM0OUKllcrm5n"></script>
-
-    <link rel="shortcut icon" type="image/x-icon" href="{{ asset('public/img/favicon.ico') }}">
-
-    <!-- BEGIN: Vendor CSS-->
-    <link rel="stylesheet" type="text/css" href="{{ asset('public/vendors/css/vendors-rtl.min.css?v1.2.8') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('public/vendors/css/charts/apexcharts.css?v1.2.8') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('public/vendors/css/extensions/dragula.min.css?v1.2.8') }}">
-    <!-- END: Vendor CSS-->
-
-    <!-- BEGIN: Theme CSS-->
-    <link rel="stylesheet" type="text/css" href="{{ asset('public/css-rtl/bootstrap.css?v1.2.8') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('public/css-rtl/bootstrap-extended.css?v1.2.8') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('public/css-rtl/colors.css?v1.2.8') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('public/css-rtl/components.css?v1.2.8') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('public/css-rtl/themes/dark-layout.css?v1.2.8') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('public/css-rtl/themes/semi-dark-layout.css?v1.2.8') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('public/css-rtl/select2.min.css?v1.2.8') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('public/css-rtl/custom-rtl.css?v1.2.8') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('public/css-rtl/pages/app-chat.css?v1.2.8') }}">
-    <!-- END: Theme CSS-->
-
-    <!-- BEGIN: Page CSS-->
-    <link rel="stylesheet" type="text/css"
-          href="{{ asset('public/css-rtl/core/menu/menu-types/vertical-menu.css?v1.2.8') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('public/css-rtl/pages/dashboard-analytics.css?v1.2.8') }}">
-    <link rel="stylesheet" type="text/css"
-          href="{{ asset('public/vendors/css/tables/datatable/datatables.min.css?v1.2.8') }}">
-    <!-- END: Page CSS-->
-    <link rel="stylesheet" href="{{ asset('public/css/jalali-input/js-persian-cal.css?v1.2.8') }}">
-
-
-    <link rel="stylesheet" type="text/css"
-          href="{{ asset('public/css-rtl/core/menu/menu-types/vertical-menu.css?v1.2.8') }}">
-    <link rel="stylesheet" type="text/css" href="{{ asset('public/css-rtl/pages/app-chat.?v1.2.8') }}">
-
-    <script src="{{ asset('public/js/world-map.js?v1.2.8') }}"></script>
-    <link href="{{ asset('public/css/world-map.css?v1.2.8') }}" rel="stylesheet">
-
-    <link rel="stylesheet" type="text/css" href="{{ asset('public/style.css?v1.2.8') }}">
-    <script src="{{ asset('public/js/scripts/jalali-input/js-persian-cal.min.js?v1.2.8') }}"
-            type="text/javascript"></script>
-
-</head>
-
+@include('layouts.header')
 <body
     class="vertical-layout vertical-menu-modern boxicon-layout no-card-shadow content-left-sidebar chat-application navbar-sticky footer-static  "
     data-open="click" data-menu="vertical-menu-modern" data-col="content-left-sidebar">
@@ -106,7 +50,7 @@
                             <a class="dropdown-item" href="{{ env('APP_URL') }}/ticket">
                                 <i class="bx bx-envelope mr-50"></i> پیام‌های من</a>
                             <div class="dropdown-divider mb-0"></div>
-                            <a class="dropdown-item" onclick="logout({{ env('APP_URL') }})"><i
+                            <a class="dropdown-item" href="{{ route('logout') }}"><i
                                     class="bx bx-power-off mr-50"></i> خروج</a>
                         </div>
                     </li>
@@ -360,57 +304,4 @@
     </p>
 </footer>
 
-
-<script src="{{ asset('public/vendors/js/vendors.min.js?v1.2.8') }}"></script>
-<script src="{{ asset('public/fonts/LivIconsEvo/js/LivIconsEvo.tools.js?v1.2.8') }}"></script>
-<script src="{{ asset('public/fonts/LivIconsEvo/js/LivIconsEvo.defaults.js?v1.2.8') }}"></script>
-<script src="{{ asset('public/fonts/LivIconsEvo/js/LivIconsEvo.min.js?v1.2.8') }}"></script>
-<!-- BEGIN Vendor JS-->
-
-<!-- BEGIN: Page Vendor JS-->
-<script src="{{ asset('public/vendors/js/charts/apexcharts.min.js?v1.2.8') }}"></script>
-
-<script src="{{ asset('public/vendors/js/extensions/dragula.min.js?v1.2.8') }}"></script>
-<!-- END: Page Vendor JS-->
-
-<!-- BEGIN: Theme JS-->
-<script src="{{ asset('public/js/core/app-menu.js?v1.2.8') }}"></script>
-<script src="{{ asset('public/js/core/app.js?v1.2.8') }}"></script>
-<script src="{{ asset('public/js/scripts/components.js?v1.2.8') }}"></script>
-<script src="{{ asset('public/js/scripts/footer.js?v1.2.8') }}"></script>
-<!-- END: Theme JS-->
-
-<!-- BEGIN: Page JS-->
-<script src="{{ asset('public/js/scripts/datatables/datatable.js?v1.2.8') }}"></script>
-<script src="{{ asset('public/js/scripts/pages/app-chat.js?v1.2.8') }}"></script>
-
-<script src="{{ asset('public/js/scripts/pages/dashboard-analytics.js?v1.2.8') }}"></script>
-<script src="{{ asset('public/main.js?v1.2.8') }}"></script>
-
-
-<!-- END: Page JS-->
-
-{{--
-<!-- BEGIN: Page Vendor JS-->
-<script src="{{ asset('public/vendors/js/tables/datatable/datatables.min.js?v1.2.8') }}"></script>
-<script src="{{ asset('public/vendors/js/tables/datatable/dataTables.bootstrap4.min.js?v1.2.8') }}"></script>
-<script src="{{ asset('public/vendors/js/tables/datatable/dataTables.buttons.min.js?v1.2.8') }}"></script>
-<script src="{{ asset('public/vendors/js/tables/datatable/buttons.html5.min.js?v1.2.8') }}"></script>
-<script src="{{ asset('public/vendors/js/tables/datatable/buttons.print.min.js?v1.2.8') }}"></script>
-<script src="{{ asset('public/vendors/js/tables/datatable/buttons.bootstrap.min.js?v1.2.8') }}"></script>
-<script src="{{ asset('public/vendors/js/tables/datatable/pdfmake.min.js?v1.2.8') }}"></script>
-<script src="{{ asset('public/vendors/js/tables/datatable/vfs_fonts.js?v1.2.8') }}"></script>
-<!-- END: Page Vendor JS-->
-
-<script src="{{ asset('public/js/scripts/select2.full.min.js?v1.2.8') }}"></script>
-<script src="{{ asset('public/js/scripts/form-select2.min.js?v1.2.8') }}"></script>
-
-
-<script src="{{ asset('public/vendors/js/charts/chart.min.js?v1.2.8') }}"></script>
-<script src="{{ asset('public/vendors/js/charts/chart-chartjs.js?v1.2.8') }}"></script>
---}}
-
-
-</body>
-
-</html>
+@include('layouts.footer')

@@ -8,6 +8,7 @@ use App\Models\Country;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
@@ -19,10 +20,12 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-
-        $filter = $this->doFilter(User::query(), $request, ['id','name']);
-        $user = $filter[0];
-        return view('admin.user.index',compact('user'));
+        if (auth()->user()->can('view users')) {
+            $filter = $this->doFilter(User::query(), $request, ['id', 'name']);
+            $user = $filter[0];
+            return view('admin.user.index', compact('user'));
+        }
+        return redirect()->route('dashboard')->with('failed','شما به این بخش دسترسی ندارید!');
     }
 
     /**
@@ -30,8 +33,11 @@ class UserController extends Controller
      */
     public function create()
     {
-        $permissions = Permission::all();
-        return view('admin.user.create', compact('permissions'));
+        if (auth()->user()->can('create user')) {
+            $permissions = Permission::all();
+            return view('admin.user.create', compact('permissions'));
+        }
+        return redirect()->route('dashboard')->with('failed','شما به این بخش دسترسی ندارید!');
     }
 
     /**
@@ -39,13 +45,16 @@ class UserController extends Controller
      */
     public function store(UserStoreRequest $request)
     {
-        $request->validated();
-        $user = User::create($request->all());
-        if ($request->has('permissions')) {
-            $user->syncPermissions($request->permissions);
-        }
+        if (auth()->user()->can('create user')) {
+            $request->validated();
+            $user = User::create($request->all());
+            if ($request->has('permissions')) {
+                $user->syncPermissions($request->permissions);
+            }
 
-        return redirect()->route('users.index')->with('success','کاربر با موفقیت ساخته شد.');
+            return redirect()->route('users.index')->with('success','کاربر با موفقیت ساخته شد.');
+        }
+        return redirect()->route('dashboard')->with('failed','شما به این بخش دسترسی ندارید!');
     }
 
     /**
@@ -53,14 +62,18 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-        $permissions = Permission::all();
-        $userPermissions = $user->permissions->pluck('title')->toArray();
-        $settings = $this->loadSetting([
-            'language','education','religious','religion2','opinionAboutIran','financialSituation','donation','sex'
-        ]);
-        $countries = Country::get();
 
-        return view('admin.user.edit', compact('user', 'permissions', 'userPermissions', 'settings', 'countries'));
+        if (auth()->user()->can('edit user')) {
+            $permissions = Permission::all();
+            $userPermissions = $user->permissions->pluck('title')->toArray();
+            $settings = $this->loadSetting([
+                'language','education','religious','religion2','opinionAboutIran','financialSituation','donation','sex'
+            ]);
+            $countries = Country::get();
+
+            return view('admin.user.edit', compact('user', 'permissions', 'userPermissions', 'settings', 'countries'));
+        }
+        return redirect()->route('dashboard')->with('failed','شما به این بخش دسترسی ندارید!');
     }
 
     /**
@@ -68,19 +81,22 @@ class UserController extends Controller
      */
     public function update(UserUpdateRequest $request, User $user)
     {
-        $request->validated();
-        $input = $request->all();
+        if (auth()->user()->can('edit user')) {
+            $request->validated();
+            $input = $request->all();
 
-        if (!empty($input['password'])) {
-            $input['password'] = bcrypt($request->password);
-        } else {
-            $input = Arr::except($input, array('password'));
+            if (!empty($input['password'])) {
+                $input['password'] = bcrypt($request->password);
+            } else {
+                $input = Arr::except($input, array('password'));
+            }
+            $user->update($input);
+            if ($request->has('permissions')) {
+                $user->syncPermissions($request->permissions);
+            }
+            return redirect()->route('users.index')->with('success','کاربر با موفقیت اپدیت شد.');
         }
-        $user->update($input);
-        if ($request->has('permissions')) {
-            $user->syncPermissions($request->permissions);
-        }
-        return redirect()->route('users.index')->with('success','کاربر با موفقیت اپدیت شد.');
+        return redirect()->route('dashboard')->with('failed','شما به این بخش دسترسی ندارید!');
     }
 
     /**
@@ -88,7 +104,28 @@ class UserController extends Controller
      */
     public function destroy(User $user)
     {
-        $user->delete();
-        return redirect()->route('users.index')->with('success','کاربر با موفقیت حذف شد.');
+        if (auth()->user()->can('delete user')) {
+            $user->delete();
+            return redirect()->route('users.index')->with('success','کاربر با موفقیت حذف شد.');
+        }
+        return redirect()->route('dashboard')->with('failed','شما به این بخش دسترسی ندارید!');
+    }
+
+    public function loginIndex()
+    {
+        return view('auth.login');
+    }
+
+    public function login(Request $request)
+    {
+        if (Auth::attempt(['username' => $request->username, 'password' => $request->password])) {
+            Auth::user();
+            return redirect()->route('dashboard');
+        } else return redirect()->route('loginIndex')->with('failed','یوزرنیم یا پسورد اشتباه است!');
+    }
+    public function logout()
+    {
+        Auth::logout();
+        return redirect()->route('loginIndex')->with('success','با موفقیت از اکانت خارج شدید!');
     }
 }

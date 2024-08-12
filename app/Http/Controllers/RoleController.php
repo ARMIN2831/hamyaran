@@ -14,9 +14,12 @@ class RoleController extends Controller
      */
     public function index(Request $request)
     {
-        $filter = $this->doFilter(Permission::query(), $request, ['id','name']);
-        $permissions = $filter[0];
-        return view('admin.permission.index',compact('permissions'));
+        if (auth()->user()->can('view permission')) {
+            $filter = $this->doFilter(Permission::query(), $request, ['id','name']);
+            $permissions = $filter[0];
+            return view('admin.permission.index',compact('permissions'));
+        }
+        return redirect()->route('dashboard')->with('failed','شما به این بخش دسترسی ندارید!');
     }
 
     /**
@@ -24,7 +27,10 @@ class RoleController extends Controller
      */
     public function create()
     {
+        if (auth()->user()->can('create permission')) {
         return view('admin.permission.create');
+        }
+        return redirect()->route('dashboard')->with('failed','شما به این بخش دسترسی ندارید!');
     }
 
     /**
@@ -32,9 +38,12 @@ class RoleController extends Controller
      */
     public function store(PermissionStoreRequest $request)
     {
-        $request->validated();
-        Permission::create(['name' => now(),'title' => $request->title]);
-        return redirect()->route('permissions.index')->with('success','پرمیشن با موفقیت ساخته شد.');
+        if (auth()->user()->can('create permission')) {
+            $request->validated();
+            Permission::create(['name' => now(),'title' => $request->title]);
+            return redirect()->route('permissions.index')->with('success','پرمیشن با موفقیت ساخته شد.');
+        }
+        return redirect()->route('dashboard')->with('failed','شما به این بخش دسترسی ندارید!');
     }
 
     /**
@@ -42,8 +51,10 @@ class RoleController extends Controller
      */
     public function edit(Permission $permission)
     {
-
-        return view('admin.permission.edit', compact('permission'));
+        if (auth()->user()->can('edit permission')) {
+            return view('admin.permission.edit', compact('permission'));
+        }
+        return redirect()->route('dashboard')->with('failed','شما به این بخش دسترسی ندارید!');
     }
 
     /**
@@ -51,8 +62,11 @@ class RoleController extends Controller
      */
     public function update(PermissionUpdateRequest $request, Permission $permission)
     {
-        $request->validated();
-        $permission->update($request->all());
-        return redirect()->route('permissions.index')->with('success','پرمیشن با موفقیت اپدیت شد.');
+        if (auth()->user()->can('edit permission')) {
+            $request->validated();
+            $permission->update($request->all());
+            return redirect()->route('permissions.index')->with('success','پرمیشن با موفقیت اپدیت شد.');
+        }
+        return redirect()->route('dashboard')->with('failed','شما به این بخش دسترسی ندارید!');
     }
 }

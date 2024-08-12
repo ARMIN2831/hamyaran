@@ -1,40 +1,4 @@
-<!DOCTYPE html>
-<html lang="fa">
-<head>
-    <?php
-    require "meta.php";
-    include "login-check.php";
-    ?>
-    <link rel="apple-touch-icon" href="images/ico/apple-icon-120.png">
-    <link rel="shortcut icon" type="image/x-icon" href="images/ico/favicon.ico">
-
-    <!-- BEGIN: Vendor CSS-->
-    <link rel="stylesheet" type="text/css" href="vendors/css/vendors-rtl.min.css?<?=siteVersion?>">
-    <link rel="stylesheet" type="text/css" href="vendors/css/charts/apexcharts.css?<?=siteVersion?>">
-    <link rel="stylesheet" type="text/css" href="vendors/css/extensions/dragula.min.css?<?=siteVersion?>">
-    <!-- END: Vendor CSS-->
-
-    <!-- BEGIN: Theme CSS-->
-    <link rel="stylesheet" type="text/css" href="css-rtl/bootstrap.css?<?=siteVersion?>">
-    <link rel="stylesheet" type="text/css" href="css-rtl/bootstrap-extended.css?<?=siteVersion?>">
-    <link rel="stylesheet" type="text/css" href="css-rtl/colors.css?<?=siteVersion?>">
-    <link rel="stylesheet" type="text/css" href="css-rtl/components.css?<?=siteVersion?>">
-    <link rel="stylesheet" type="text/css" href="css-rtl/themes/dark-layout.css?<?=siteVersion?>">
-    <link rel="stylesheet" type="text/css" href="css-rtl/themes/semi-dark-layout.css?<?=siteVersion?>">
-    <link rel="stylesheet" type="text/css" href="css-rtl/custom-rtl.css?<?=siteVersion?>">
-    <!-- END: Theme CSS-->
-
-    <!-- BEGIN: Page CSS-->
-    <link rel="stylesheet" type="text/css" href="css-rtl/core/menu/menu-types/vertical-menu.css?<?=siteVersion?>">
-    <link rel="stylesheet" type="text/css" href="css-rtl/pages/dashboard-analytics.css?<?=siteVersion?>">
-    <!-- END: Page CSS-->
-
-    <!-- BEGIN: Custom CSS-->
-    <link rel="stylesheet" type="text/css" href="css/style-rtl.css">
-    <link rel="stylesheet" type="text/css" href="style.css">
-    <!-- END: Custom CSS-->
-</head>
-
+@include('layouts.header')
 <body class="vertical-layout vertical-menu-modern boxicon-layout no-card-shadow 1-column  navbar-sticky footer-static bg-full-screen-image  blank-page blank-page" data-open="click" data-menu="vertical-menu-modern" data-col="1-column">
 <!-- BEGIN: Content-->
 <div class="app-content content">
@@ -56,6 +20,11 @@
                                             <h4 class="text-center mb-2 white">ورود به سامانه</h4>
                                         </div>
                                     </div>
+                                    @if(session('failed'))
+                                        <div style="margin-top: 20px;margin-bottom: 0" class="alert alert-danger">
+                                            {{ session('failed') }}
+                                        </div>
+                                    @endif
                                     <div class="card-content">
                                         <div class="card-body">
                                             <div class="divider">
@@ -64,14 +33,11 @@
                                                         ورود به سامانه همیاران ملل
                                                     </small>
                                                 </div>
-                                            </div>
-                                            <?php
-                                            require "login-c.php";
-                                            ?>
-                                            <form method="post">
+                                            <form action="{{ route('loginIndex') }}" method="post">
+                                                @csrf
                                                 <div class="form-group mb-50">
                                                     <label class="text-bold-600 white" for="userName">نام کاربری </label>
-                                                    <input type="text" name="userName" class="form-control dir-ltr" id="userName" placeholder="username" required></div>
+                                                    <input type="text" name="username" class="form-control dir-ltr" id="userName" placeholder="username" required></div>
                                                 <div class="form-group">
                                                     <label class="text-bold-600 white" for="password">رمز ورود </label>
                                                     <input type="password" name="password" class="form-control dir-ltr" id="password" placeholder="Password" required>
@@ -85,12 +51,12 @@
                                                             </label>
                                                         </div>
                                                     </div>
-                                                    <div class="text-right"><a href="<?=baseDir?>/forget" class="card-link white-link"><small>فراموشی رمز ورود</small></a></div>
+                                                    <div class="text-right"><a href="" class="card-link white-link"><small>فراموشی رمز ورود</small></a></div>
                                                 </div>
                                                 <button type="submit" name="submit" class="btn btn-primary glow w-100 position-relative white-link">ورود<i id="icon-arrow" class="bx bx-left-arrow-alt"></i></button>
                                             </form>
                                             <hr>
-                                            <div class="text-center"><small class="mr-25 white">برای ورود به سامانه مشکل دارید؟</small><a href="<?=baseDir?>/forget" class="white-link"><small>بازیابی رمز ورود</small></a></div>
+                                            <div class="text-center"><small class="mr-25 white">برای ورود به سامانه مشکل دارید؟</small><a href="" class="white-link"><small>بازیابی رمز ورود</small></a></div>
                                         </div>
                                     </div>
                                 </div>
@@ -104,12 +70,4 @@
         </div>
     </div>
 </div>
-<!-- END: Content-->
-
-<?php
-require "footer.php";
-?>
-
-</body>
-<!-- END: Body-->
-</html>
+@include('layouts.footer')
