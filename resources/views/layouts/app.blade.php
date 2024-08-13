@@ -199,9 +199,9 @@
 
             <li class="nav-item"><a href="#"><i class="bx bxs-book"></i><span class="menu-title" data-i18n="Invoice">دوره‌ها</span></a>
                 <ul class="menu-content">
-                    <li><a href="{{ env('APP_URL') }}/course/add"><i class="bx bx-left-arrow-alt"></i><span
+                    <li><a href="{{ route('courses.create') }}"><i class="bx bx-left-arrow-alt"></i><span
                                 class="menu-item" data-i18n="Invoice List">افزودن دوره</span></a></li>
-                    <li><a href="{{ env('APP_URL') }}/course/edit"><i class="bx bx-left-arrow-alt"></i><span
+                    <li><a href="{{ route('courses.index') }}"><i class="bx bx-left-arrow-alt"></i><span
                                 class="menu-item" data-i18n="Invoice List">ویرایش دوره</span></a></li>
                 </ul>
             </li>

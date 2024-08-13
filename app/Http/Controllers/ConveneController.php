@@ -5,14 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Requests\convene\ConveneStoreRequest;
 use App\Http\Requests\convene\ConveneUpdateRequest;
 use App\Models\Convene;
-use App\Models\Country;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
 
 class ConveneController extends Controller
 {
