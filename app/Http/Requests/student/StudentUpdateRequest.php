@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\permission;
+namespace App\Http\Requests\student;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class PermissionUpdateRequest extends FormRequest
+class StudentUpdateRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,7 +22,7 @@ class PermissionUpdateRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title' => 'required|min:3|unique:permissions,title,'. $this->permission->id . ',id',
+            //'name' => 'required',
         ];
     }
 }

@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\user\UserStoreRequest;
 use App\Http\Requests\user\UserUpdateRequest;
+use App\Models\Convene;
 use App\Models\Country;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
@@ -32,10 +34,11 @@ class UserController extends Controller
     public function create()
     {
         if (auth()->user()->can('create user')) {
-            $permissions = Permission::get();
-            return view('admin.user.create', compact('permissions'));
+            $roles = Role::get();
+            $convenes = Convene::get();
+            return view('admin.user.create', compact('roles','convenes'));
         }
-        return redirect()->route('dashboard')->with('failed','شما به این بخش دسترسی ندارید!');
+        return redirect()->route('dashboard')->with('failed', 'شما به این بخش دسترسی ندارید!');
     }
 
     /**
@@ -46,13 +49,14 @@ class UserController extends Controller
         if (auth()->user()->can('create user')) {
             $request->validated();
             $user = User::create($request->all());
-            if ($request->has('permissions')) {
-                $user->syncPermissions($request->permissions);
+
+            if ($request->has('role')) {
+                $user->assignRole($request->role);
             }
 
-            return redirect()->route('users.index')->with('success','کاربر با موفقیت ساخته شد.');
+            return redirect()->route('users.index')->with('success', 'کاربر با موفقیت ساخته شد.');
         }
-        return redirect()->route('dashboard')->with('failed','شما به این بخش دسترسی ندارید!');
+        return redirect()->route('dashboard')->with('failed', 'شما به این بخش دسترسی ندارید!');
     }
 
     /**
@@ -60,18 +64,16 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
-
         if (auth()->user()->can('edit user')) {
-            $permissions = Permission::all();
-            $userPermissions = $user->permissions->pluck('title')->toArray();
-            $settings = $this->loadSetting([
-                'language','education','religious','religion2','opinionAboutIran','financialSituation','donation','sex'
-            ]);
+            $roles = Role::get();
+            $userRole = $user->roles->pluck('name');
+            $convenes = Convene::get();
+            $settings = $this->loadSetting(['language', 'education', 'religious', 'religion2', 'opinionAboutIran', 'financialSituation', 'donation', 'sex']);
             $countries = Country::get();
 
-            return view('admin.user.edit', compact('user', 'permissions', 'userPermissions', 'settings', 'countries'));
+            return view('admin.user.edit', compact('user', 'roles', 'userRole', 'convenes', 'settings', 'countries'));
         }
-        return redirect()->route('dashboard')->with('failed','شما به این بخش دسترسی ندارید!');
+        return redirect()->route('dashboard')->with('failed', 'شما به این بخش دسترسی ندارید!');
     }
 
     /**
@@ -86,15 +88,18 @@ class UserController extends Controller
             if (!empty($input['password'])) {
                 $input['password'] = bcrypt($request->password);
             } else {
-                $input = Arr::except($input, array('password'));
+                $input = Arr::except($input, ['password']);
             }
+
             $user->update($input);
-            if ($request->has('permissions')) {
-                $user->syncPermissions($request->permissions);
+
+            if ($request->has('role')) {
+                $user->syncRoles($request->role);
             }
-            return redirect()->route('users.index')->with('success','کاربر با موفقیت اپدیت شد.');
+
+            return redirect()->route('users.index')->with('success', 'کاربر با موفقیت اپدیت شد.');
         }
-        return redirect()->route('dashboard')->with('failed','شما به این بخش دسترسی ندارید!');
+        return redirect()->route('dashboard')->with('failed', 'شما به این بخش دسترسی ندارید!');
     }
 
     /**

@@ -61,7 +61,6 @@ class CourseController extends Controller
             $convenes = Convene::get();
 
             $ids = $course->convenes->pluck('id','id')->toArray();
-            if (isset($course->convenes)) foreach ($course->convenes as $convene) $ids [$convene->id] = $convene->id;
             return view('admin.course.edit', compact('course','convenes', 'ids'));
         }
         return redirect()->route('dashboard')->with('failed','شما به این بخش دسترسی ندارید!');

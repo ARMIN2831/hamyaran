@@ -31,7 +31,7 @@
                             <form method="post" action="{{ route('users.store') }}">
                                 @csrf
                                 <div class="card-header">
-                                    <h4 class="card-title">مشخصات مدیرکل:</h4>
+                                    <h4 class="card-title">مشخصات کاربر:</h4>
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6">
@@ -58,27 +58,19 @@
                                             <input type="password" name="password" id="password" class="form-control">
                                         </fieldset>
                                     </div>
+                                    @if(auth()->user()->can('view role'))
                                     <div class="col-md-6">
                                         <fieldset class="form-group">
-                                            <label for="level"> سطح </label>
-                                            <select style="width: 100%;margin-right: 0" name="level" id="level" class="select2 form-control">
+                                            <label for="role"> نقش </label>
+                                            <select style="width: 100%;margin-right: 0" name="role" id="role" class="select2 form-control">
                                                 <option value="">انتخاب کنید</option>
-                                                    <option @if('مدیرکل' == old('level')) selected="selected" @endif value="مدیرکل">مدیرکل</option>
-                                                    <option @if('مدیر' == old('level')) selected="selected" @endif value="مدیر">مدیر</option>
-                                                    <option @if('پشتیبان' == old('level')) selected="selected" @endif value="پشتیبان">پشتیبان</option>
+                                                @foreach ($roles as $role)
+                                                    <option value="{{ $role->name }}">{{ $role->name }}</option>
+                                                @endforeach
                                             </select>
                                         </fieldset>
                                     </div>
-                                    <div class="col-md-12">
-                                        <fieldset class="form-group">
-                                            <label> دسترسی‌ها </label>
-                                            <br>
-                                            @foreach($permissions as $permission)
-                                            <label> <input type="checkbox" name="permissions[]" value="{{ $permission->name }}">
-                                                {{ $permission->title }}</label>
-                                            @endforeach
-                                        </fieldset>
-                                    </div>
+                                    @endif
                                     <div class="col-md-6">
                                         <input type="submit" name="submit" value="تایید" class="btn btn-success">
                                     </div>

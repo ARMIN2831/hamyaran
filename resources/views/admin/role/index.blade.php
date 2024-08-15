@@ -8,10 +8,10 @@
                 <div class="content-header-left col-12 mb-2 mt-1">
                     <div class="row breadcrumbs-top">
                         <div class="col-12">
-                            <h5 class="content-header-title float-left pr-1 mb-0">پرمیشن ها</h5>
+                            <h5 class="content-header-title float-left pr-1 mb-0">نقش ها</h5>
                             <div class="breadcrumb-wrapper col-12">
                                 <ol class="breadcrumb p-0 mb-0">
-                                    <li class="breadcrumb-item"><a> ویرایش پرمیشن</a>
+                                    <li class="breadcrumb-item"><a> ویرایش نقش</a>
                                     </li>
                                     <li class="breadcrumb-item active">ویرایش
                                     </li>
@@ -34,9 +34,9 @@
 
 
 
-                                <form method="get" action="{{ route('permissions.index') }}" id="filterForm">
+                                <form method="get" action="{{ route('roles.index') }}" id="filterForm">
                                     <div class="card-header">
-                                        <h4 class="card-title">لیست پرمیشن ها</h4>
+                                        <h4 class="card-title">لیست نقش ها</h4>
                                         <br>
                                     </div>
 
@@ -94,19 +94,24 @@
                                                 </tr>
                                                 </thead>
                                                 <tbody>
-                                                @foreach($permissions as $row)
+                                                @foreach($roles as $row)
                                                     <tr>
                                                         <td>{{ $row->id }}</td>
-                                                        <td>{{ $row->title }}</td>
+                                                        <td>{{ $row->name }}</td>
                                                         <td>
-                                                            <a href="{{ route('permissions.edit',$row->id) }}" title="ویرایش" class="btn btn-small btn-primary"><i
+                                                            <a href="{{ route('roles.edit',$row->id) }}" title="ویرایش" class="btn btn-small btn-primary"><i
                                                                     class="bx bx-edit"></i></a>
+                                                            <form method="post" action="{{ route('roles.destroy',$row->id) }}">
+                                                                @csrf
+                                                                @method('DELETE')
+                                                                <button style="padding: 3px;margin-top: 2px;" type="submit" title="حذف" class="btn btn-small btn-danger"><i class="bx bx-x-circle"></i></button>
+                                                            </form>
                                                         </td>
                                                     </tr>
                                                 @endforeach
                                             </table>
                                         </div>
-                                        {{ $permissions->appends(request()->query())->links('pagination::bootstrap-4') }}
+                                        {{ $roles->appends(request()->query())->links('pagination::bootstrap-4') }}
                                     </div>
                                 </div>
                             </div>

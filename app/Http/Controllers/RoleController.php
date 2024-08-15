@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\permission\PermissionStoreRequest;
-use App\Http\Requests\permission\PermissionUpdateRequest;
+use App\Http\Requests\role\RoleStoreRequest;
+use App\Http\Requests\role\RoleUpdateRequest;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class RoleController extends Controller
 {
@@ -14,10 +15,10 @@ class RoleController extends Controller
      */
     public function index(Request $request)
     {
-        if (auth()->user()->can('view permission')) {
-            $filter = $this->doFilter(Permission::query(), $request, ['id','title']);
-            $permissions = $filter[0];
-            return view('admin.permission.index',compact('permissions'));
+        if (auth()->user()->can('view role')) {
+            $filter = $this->doFilter(Role::query(), $request, ['id','title']);
+            $roles = $filter[0];
+            return view('admin.role.index',compact('roles'));
         }
         return redirect()->route('dashboard')->with('failed','شما به این بخش دسترسی ندارید!');
     }
@@ -27,8 +28,9 @@ class RoleController extends Controller
      */
     public function create()
     {
-        if (auth()->user()->can('create permission')) {
-        return view('admin.permission.create');
+        if (auth()->user()->can('create role')) {
+            $permissions = Permission::get();
+            return view('admin.role.create',compact('permissions'));
         }
         return redirect()->route('dashboard')->with('failed','شما به این بخش دسترسی ندارید!');
     }
@@ -36,12 +38,15 @@ class RoleController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(PermissionStoreRequest $request)
+    public function store(RoleStoreRequest $request)
     {
-        if (auth()->user()->can('create permission')) {
+        if (auth()->user()->can('create role')) {
             $request->validated();
-            Permission::create(['name' => now(),'title' => $request->title]);
-            return redirect()->route('permissions.index')->with('success','پرمیشن با موفقیت ساخته شد.');
+            $role = Role::create(['name' => $request->name]);
+            if ($request->has('permissions')) {
+                $role->syncPermissions($request->permissions);
+            }
+            return redirect()->route('roles.index')->with('success','نقش با موفقیت ساخته شد.');
         }
         return redirect()->route('dashboard')->with('failed','شما به این بخش دسترسی ندارید!');
     }
@@ -49,10 +54,12 @@ class RoleController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Permission $permission)
+    public function edit(Role $role)
     {
-        if (auth()->user()->can('edit permission')) {
-            return view('admin.permission.edit', compact('permission'));
+        if (auth()->user()->can('edit role')) {
+            $permissions = Permission::get();
+            $rolePermissions = $role->permissions->pluck('name')->toArray();
+            return view('admin.role.edit', compact('role', 'permissions', 'rolePermissions'));
         }
         return redirect()->route('dashboard')->with('failed','شما به این بخش دسترسی ندارید!');
     }
@@ -60,12 +67,27 @@ class RoleController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(PermissionUpdateRequest $request, Permission $permission)
+    public function update(RoleUpdateRequest $request, Role $role)
     {
-        if (auth()->user()->can('edit permission')) {
+        if (auth()->user()->can('edit role')) {
             $request->validated();
-            $permission->update($request->all());
-            return redirect()->route('permissions.index')->with('success','پرمیشن با موفقیت اپدیت شد.');
+            $role->update($request->all());
+            if ($request->has('permissions')) {
+                $role->syncPermissions($request->permissions);
+            }
+            return redirect()->route('roles.index')->with('success','نقش با موفقیت اپدیت شد.');
+        }
+        return redirect()->route('dashboard')->with('failed','نقش به این بخش دسترسی ندارید!');
+    }
+
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(Role $role)
+    {
+        if (auth()->user()->can('delete role')) {
+            $role->delete();
+            return redirect()->route('courses.index')->with('success','نقش با موفقیت حذف شد.');
         }
         return redirect()->route('dashboard')->with('failed','شما به این بخش دسترسی ندارید!');
     }

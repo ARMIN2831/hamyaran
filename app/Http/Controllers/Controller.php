@@ -54,4 +54,23 @@ abstract class Controller
         }
         return $result;
     }
+    public function uploadFile($request, $name, $model, $path)
+    {
+        if ($request->hasFile($name)) {
+            if ($model->$name) {
+                $oldImagePath = public_path($path . '/' . $model->$name);
+                if (file_exists($oldImagePath)) {
+                    unlink($oldImagePath);
+                }
+            }
+
+
+            $file = $request->file($name);
+            $file_name = time() . '.' . $file->getClientOriginalExtension();
+            $file->move(public_path($path), $file_name);
+
+            return $file_name;
+        }
+        return null;
+    }
 }

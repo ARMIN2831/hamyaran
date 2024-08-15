@@ -168,31 +168,31 @@
 
             <li class="nav-item"><a href="#"><i class="bx bxs-user"></i><span class="menu-title" data-i18n="Invoice">دانشجویان</span></a>
                 <ul class="menu-content">
-                    <li><a href="{{ env('APP_URL') }}/stu/add"><i class="bx bx-left-arrow-alt"></i><span
+                    <li><a href="{{ route('students.create') }}"><i class="bx bx-left-arrow-alt"></i><span
                                 class="menu-item" data-i18n="Invoice List">افزودن دانشجو</span></a></li>
                     <li><a href="{{ env('APP_URL') }}/stu/excel"><i class="bx bx-left-arrow-alt"></i><span
                                 class="menu-item" data-i18n="Invoice List">افزودن دانشجو از اکسل</span></a></li>
-                    <li><a href="{{ env('APP_URL') }}/stu/edit"><i class="bx bx-left-arrow-alt"></i><span
+                    <li><a href="{{ route('students.index') }}"><i class="bx bx-left-arrow-alt"></i><span
                                 class="menu-item" data-i18n="Invoice List">ویرایش دانشجویان</span></a></li>
                 </ul>
             </li>
 
             <li class="nav-item"><a href="#"><i class="bx bxs-bank"></i><span class="menu-title" data-i18n="Invoice">موسسات</span></a>
                 <ul class="menu-content">
-                    <li><a href="{{ env('APP_URL') }}/ins/add"><i class="bx bx-left-arrow-alt"></i><span
+                    <li><a href="{{ route('institutes.create') }}"><i class="bx bx-left-arrow-alt"></i><span
                                 class="menu-item" data-i18n="Invoice List">افزودن موسسه</span></a></li>
                     <li><a href="{{ env('APP_URL') }}/ins/excel"><i class="bx bx-left-arrow-alt"></i><span
                                 class="menu-item" data-i18n="Invoice List">افزودن موسسه از اکسل</span></a></li>
-                    <li><a href="{{ env('APP_URL') }}/ins/edit"><i class="bx bx-left-arrow-alt"></i><span
+                    <li><a href="{{ route('institutes.index') }}"><i class="bx bx-left-arrow-alt"></i><span
                                 class="menu-item" data-i18n="Invoice List">ویرایش موسسات</span></a></li>
                 </ul>
             </li>
 
             <li class="nav-item"><a href="#"><i class="bx bxs-group"></i><span class="menu-title" data-i18n="Invoice">کلاس‌ها</span></a>
                 <ul class="menu-content">
-                    <li><a href="{{ env('APP_URL') }}/teachClass/add"><i class="bx bx-left-arrow-alt"></i><span
+                    <li><a href="{{ route('classrooms.create') }}"><i class="bx bx-left-arrow-alt"></i><span
                                 class="menu-item" data-i18n="Invoice List">افزودن کلاس</span></a></li>
-                    <li><a href="{{ env('APP_URL') }}/teachClass/edit"><i class="bx bx-left-arrow-alt"></i><span
+                    <li><a href="{{ route('classrooms.index') }}"><i class="bx bx-left-arrow-alt"></i><span
                                 class="menu-item" data-i18n="Invoice List">ویرایش کلاس</span></a></li>
                 </ul>
             </li>
@@ -229,12 +229,12 @@
             </li>
 
 
-            <li class="nav-item"><a href="#"><i class="bx bx-user-plus"></i><span class="menu-title" data-i18n="Invoice">مدیریت پرمیشن ها</span></a>
+            <li class="nav-item"><a href="#"><i class="bx bx-user-plus"></i><span class="menu-title" data-i18n="Invoice">مدیریت نقش ها</span></a>
                 <ul class="menu-content">
 
-                    <li><a href="{{ route('permissions.create') }}"><i class="bx bx-left-arrow-alt"></i><span class="menu-item" data-i18n="Invoice List">افزودن پرمیشن</span></a></li>
+                    <li><a href="{{ route('roles.create') }}"><i class="bx bx-left-arrow-alt"></i><span class="menu-item" data-i18n="Invoice List">افزودن نقش</span></a></li>
 
-                    <li class="nav-item"><a href="{{ route('permissions.index') }}"><i class="bx bx-user-check"></i><span class="menu-title" data-i18n="Chat">ویرایش پرمیشن</span></a>
+                    <li class="nav-item"><a href="{{ route('roles.index') }}"><i class="bx bx-user-check"></i><span class="menu-title" data-i18n="Chat">ویرایش نقش</span></a>
                     </li>
                 </ul>
             </li>

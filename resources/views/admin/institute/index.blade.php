@@ -8,12 +8,12 @@
                 <div class="content-header-left col-12 mb-2 mt-1">
                     <div class="row breadcrumbs-top">
                         <div class="col-12">
-                            <h5 class="content-header-title float-left pr-1 mb-0">مجتمع‌ها</h5>
+                            <h5 class="content-header-title float-left pr-1 mb-0">موسسات</h5>
                             <div class="breadcrumb-wrapper col-12">
                                 <ol class="breadcrumb p-0 mb-0">
-                                    <li class="breadcrumb-item"><a> مدیریت مجتمع‌ها </a>
+                                    <li class="breadcrumb-item"><a> مدیریت موسسات </a>
                                     </li>
-                                    <li class="breadcrumb-item active">ویرایش مجتمع
+                                    <li class="breadcrumb-item active">ویرایش موسسه
                                     </li>
                                 </ol>
                                 @if(session('success'))
@@ -34,9 +34,9 @@
 
 
 
-                                <form method="get" action="{{ route('convenes.index') }}" id="filterForm">
+                                <form method="get" action="{{ route('institutes.index') }}" id="filterForm">
                                     <div class="card-header">
-                                        <h4 class="card-title">لیست مجتمع‌ها</h4>
+                                        <h4 class="card-title">لیست موسسات</h4>
                                         <br>
                                     </div>
 
@@ -89,20 +89,31 @@
                                                 <thead>
                                                 <tr>
                                                     <th>#</th>
-                                                    <th>نام مجتمع</th>
-                                                    <th>مدیران</th>
+                                                    <th>نام موسسه</th>
+                                                    <th>کشور</th>
+                                                    <th>شهر</th>
+                                                    <th>شماره تماس</th>
+                                                    <th>ایمیل</th>
+                                                    <th>نوع</th>
+                                                    <th>پشتیبان</th>
                                                     <th>عملکرد</th>
                                                 </tr>
                                                 </thead>
                                                 <tbody>
-                                                @foreach($convenes as $row)
+                                                @foreach($institutes as $row)
                                                     <tr>
                                                         <td>{{ $row->id }}</td>
                                                         <td>{{ $row->name }}</td>
-                                                        <td>@if($row->user) <a href="{{ route('users.edit',$row->user->id) }}">{{ @$row->user->name }}</a> @endif</td>
+                                                        <td>{{ @$row->country->title }}</td>
+                                                        <td>{{ $row->city }}</td>
+                                                        <td class="dir-ltr">{{ $row->mobile }}</td>
+                                                        <td>{{ $row->email }}</td>
+                                                        <td>{{ $row->typeinstitute }}</td>
+                                                        <td>{{ @$row->user->name }}</td>
                                                         <td>
-                                                            <a href="{{ route('convenes.edit',$row->id) }}" title="ویرایش" class="btn btn-small btn-primary"><i class="bx bx-edit"></i></a>
-                                                            <form method="post" action="{{ route('convenes.destroy',$row->id) }}">
+                                                            <a href="{{ route('institutes.edit',$row->id) }}" title="ویرایش" class="btn btn-small btn-primary"><i
+                                                                    class="bx bx-edit"></i></a>
+                                                            <form method="post" action="{{ route('institutes.destroy',$row->id) }}">
                                                                 @csrf
                                                                 @method('DELETE')
                                                                 <button style="padding: 3px;margin-top: 2px;" type="submit" title="حذف" class="btn btn-small btn-danger"><i class="bx bx-x-circle"></i></button>
@@ -112,7 +123,7 @@
                                                 @endforeach
                                             </table>
                                         </div>
-                                        {{ $convenes->appends(request()->query())->links('pagination::bootstrap-4') }}
+                                        {{ $institutes->appends(request()->query())->links('pagination::bootstrap-4') }}
                                     </div>
                                 </div>
                             </div>

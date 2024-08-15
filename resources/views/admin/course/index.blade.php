@@ -99,7 +99,7 @@
                                                     <tr>
                                                         <td>{{ $row->id }}</td>
                                                         <td>{{ $row->name }}</td>
-                                                        <td>@foreach($row->convenes as $convene) {{$convene->name}}<br> @endforeach</td>
+                                                        <td>@foreach($row->convenes as $convene) <a href="{{ route('convenes.edit',$convene->id) }}">{{$convene->name}}</a> @endforeach</td>
                                                         <td>
                                                             <a href="{{ route('courses.edit',$row->id) }}" title="ویرایش" class="btn btn-small btn-primary"><i class="bx bx-edit"></i></a>
                                                             <form method="post" action="{{ route('courses.destroy',$row->id) }}">
