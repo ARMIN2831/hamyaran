@@ -26,7 +26,6 @@
                         </li>
                     </ul>
                 </div>
-
                 <ul class="nav navbar-nav float-right">
 
                     <li class="nav-item d-none d-lg-block"><a class="nav-link nav-link-expand"><i
@@ -34,10 +33,9 @@
 
                     <li class="dropdown dropdown-user nav-item">
                         <a class="dropdown-toggle nav-link dropdown-user-link" data-toggle="dropdown">
-
                             <div class="user-nav d-sm-flex d-none"><span
-                                    class="user-name">armin eslami</span><span
-                                    class="user-status text-muted">modir</span>
+                                    class="user-name">{{ auth()->user()->name }}</span><span
+                                    class="user-status text-muted">{{ auth()->user()->roles[0]->name }}</span>
                             </div>
                             <span>
                                 <img class="round"
@@ -262,9 +260,9 @@
             <li class="nav-item"><a href="#"><i class="bx bx-user-circle"></i><span class="menu-title"
                                                                                     data-i18n="Invoice">پروفایل کاربر</span></a>
                 <ul class="menu-content">
-                    <li><a href="{{ env('APP_URL') }}/profile/edit/"><i class="bx bx-left-arrow-alt"></i><span
+                    <li><a href="{{ route('profile.edit') }}"><i class="bx bx-left-arrow-alt"></i><span
                                 class="menu-item" data-i18n="Invoice List">ویرایش مشخصات</span></a></li>
-                    <li><a href="{{ env('APP_URL') }}/profile/change-password/"><i
+                    <li><a href="{{ route('profile.password') }}"><i
                                 class="bx bx-left-arrow-alt"></i><span class="menu-item" data-i18n="Invoice List">تغییر رمز ورود</span></a>
                     </li>
                 </ul>
@@ -272,9 +270,9 @@
 
             <li class="nav-item"><a href="#"><i class="bx bxs-wrench"></i><span class="menu-title" data-i18n="Invoice">تنظیمات سامانه</span></a>
                 <ul class="menu-content">
-                    <li><a href="{{ env('APP_URL') }}/setting/db/"><i class="bx bx-left-arrow-alt"></i><span
+                    <li><a href="{{ route('backup.index') }}"><i class="bx bx-left-arrow-alt"></i><span
                                 class="menu-item" data-i18n="Invoice List">پایگاه داده</span></a></li>
-                    <li><a href="{{ env('APP_URL') }}/setting/setdata/"><i class="bx bx-left-arrow-alt"></i><span
+                    <li><a href="{{ route('setting.setdata') }}"><i class="bx bx-left-arrow-alt"></i><span
                                 class="menu-item" data-i18n="Invoice List">ورودی اطلاعات</span></a></li>
                     <li><a href="{{ env('APP_URL') }}/setting/email/"><i class="bx bx-left-arrow-alt"></i><span
                                 class="menu-item" data-i18n="Invoice List">ایمیل</span></a></li>

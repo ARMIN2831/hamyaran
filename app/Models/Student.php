@@ -17,4 +17,8 @@ class Student extends Model
     {
         return $this->belongsTo(Country::class);
     }
+    public function classroom()
+    {
+        return $this->belongsToMany(Classroom::class);
+    }
 }

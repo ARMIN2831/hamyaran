@@ -47,112 +47,77 @@
                                         </fieldset>
                                     </div>
                                     @if(!auth()->user()->can('one user'))
+                                        <div class="col-md-6">
+                                            <fieldset class="form-group">
+                                                <label for="user_id"> پشتیبان </label>
+                                                <select style="width: 100%;margin-right: 0" name="user_id" id="user_id" class="select2 form-control">
+                                                    <option value="">انتخاب کنید</option>
+                                                    @foreach($users as $user)
+                                                        @php $i = ''; if($user->can('some user')) $i = '*'; @endphp
+                                                        <option dir="rtl" value="{{ $user->id }}">{{ $user->name.' '. $i .'('.@$user->convene->name.')' }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </fieldset>
+                                        </div>
+                                    @endif
                                     <div class="col-md-6">
                                         <fieldset class="form-group">
-                                            <label for="supporter"> پشتیبان </label>
-                                            <select name="supporter" id="supporter" class="select2 form-control">
+                                            <label for="course_id"> دوره </label>
+                                            <select name="course_id" id="course_id" class="custom-select">
                                                 <option value="">انتخاب کنید</option>
-                                                @foreach($users as $user)
-                                                    <option dir="rtl" value="{{ $user->id }}">{{ $user->name.' '.$user->can('some user')? '*':' ' .'('.@$user->convene->name.')' }}</option>
+                                                @foreach($courses as $course)
+                                                    <option value="{{ $course->id }}">{{ $course->name }}</option>
                                                 @endforeach
                                             </select>
                                         </fieldset>
                                     </div>
-                                    @endif
                                     <div class="col-md-6">
                                         <fieldset class="form-group">
-                                            <label for="course"> دوره </label>
-                                            <select name="course" id="course" class="custom-select">
-                                                <option <?=(($manager->level=="مدیر" || $manager->level=="پشتیبان")?"disabled":"")?> value="">انتخاب کنید</option>
-                                                <?php
-                                                $course = new Course($db);
-                                                $courses = $course->get_object_data();
-                                                foreach ($courses as $course) {
-
-                                                    if (($manager->level=="مدیر" || $manager->level=="پشتیبان")) {
-                                                        $availableFor = json_decode($course['availableFor'], 1);
-                                                        if ($availableFor[$access['convene']]){
-                                                            $available = 1;
-                                                        }
-                                                        else{
-                                                            $available = 0;
-                                                        }
-                                                    }else{
-                                                        $available = 1;
-                                                    }
-                                                    echo '<option  ' . (@$available?"":'style="display: none;"') . ' ' . ($form['course'] == $course['ID'] ? "selected" : "") . ' value="' . $course['ID'] . '">' . $course['name'] . '</option>';
-                                                }
-                                                ?>
+                                            <label for="platform_s"> محل برگزاری </label>
+                                            <select name="platform_s" id="platform_s" class="custom-select">
+                                                <option value="">انتخاب کنید</option>
+                                                @foreach ($settings['platforms'] as $setting)
+                                                    <option value="{{ $setting }}">{{ $setting }}</option>
+                                                @endforeach
                                             </select>
                                         </fieldset>
                                     </div>
                                     <div class="col-md-6">
                                         <fieldset class="form-group">
-                                            <label for="platform"> محل برگزاری </label>
-                                            <select name="platform" id="platform" class="custom-select">
+                                            <label for="country_id"> کشور </label>
+                                            <select style="width: 100%; margin-right: 0;" name="country_id" id="country_id" class="select2 form-control">
                                                 <option value="">انتخاب کنید</option>
-                                                <?php
-                                                $setting = new Setting($db);
-                                                $setting->set_object_from_sql(array("type"=>"setData","name"=>"platforms"));
-                                                $platforms = explode("\r\n",$setting->value);
-                                                foreach ($platforms as $platform) {
-                                                    echo '<option ' . ($form['platform'] == $platform ? "selected" : "") . ' value="' . $platform . '">' . $platform . '</option>';
-                                                }
-                                                ?>
-                                            </select>
-                                        </fieldset>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <fieldset class="form-group">
-                                            <label for="country"> کشور </label>
-                                            <select name="country" id="country" class="select2 form-control">
-                                                <option value="">انتخاب کنید</option>
-                                                <?php
-                                                $country = new Country($db);
-                                                $countries = $country->get_object_data();
-                                                foreach ($countries as $country) {
-                                                    echo '<option ' . ($form['country'] == $country['ID'] ? "selected" : "") . ' value="' . $country['ID'] . '">' . $country['name'] . ' - ' . $country['symbol'] . '</option>';
-                                                }
-                                                ?>
+                                                @foreach ($countries as $country)
+                                                    <option value="{{ $country->id }}">{{ $country->title }} - {{ $country->symbol }}</option>
+                                                @endforeach
                                             </select>
                                         </fieldset>
                                     </div>
                                     <div class="col-md-6">
                                         <fieldset class="form-group">
                                             <label for="language"> زبان‌ </label>
-                                            <select name="language" id="language" class="custom-select">
+                                            <select name="language_s" id="language" class="custom-select">
                                                 <option value="">انتخاب کنید</option>
-                                                <?php
-                                                $setting = new Setting($db);
-                                                $setting->set_object_from_sql(array("type"=>"setData","name"=>"language"));
-                                                $languages = explode("\r\n",$setting->value);
-                                                foreach ($languages as $language) {
-                                                    echo '<option ' . ($form['language'] == $language ? "selected" : "") . ' value="' . $language . '">' . $language . '</option>';
-                                                }
-                                                ?>
+                                                @foreach ($settings['language'] as $setting)
+                                                    <option @if($setting == $user->language_s) selected="selected" @endif value="{{ $setting }}">{{ $setting }}</option>
+                                                @endforeach
                                             </select>
                                         </fieldset>
                                     </div>
                                     <div class="col-md-6">
                                         <fieldset class="form-group">
-                                            <label for="sex"> جنسیت شرکت‌کنندگان </label>
-                                            <select name="sex" id="sex" class="custom-select">
-                                                <option value="">انتخاب کنید</option>
-                                                <?php
-                                                $setting = new Setting($db);
-                                                $setting->set_object_from_sql(array("type"=>"setData","name"=>"sex"));
-                                                $sexes = explode("\r\n",$setting->value);
-                                                foreach ($sexes as $sex) {
-                                                    echo '<option ' . ($form['sex'] == $sex ? "selected" : "") . ' value="' . $sex . '">' . $sex . '</option>';
-                                                }
-                                                ?>
-                                            </select>
+                                            @foreach ($settings['sex'] as $setting)
+                                                <label>{{ $setting }}
+                                                    <input type="radio" name="sex_s" value="{{ $setting }}">
+                                                </label>
+                                                &nbsp;&nbsp;&nbsp;
+                                            @endforeach
                                         </fieldset>
                                     </div>
                                     <div class="col-md-6">
                                         <fieldset class="form-group">
                                             <label for="startTS"> تاریخ شروع </label>
-                                            <input type="text" name="startTS" id="startTS" value="<?= @jdate("Y/m/d",@$form['startTS']) ?>" class="form-control">
+                                            <input type="text" name="startTS" id="startTS" value="" class="form-control">
                                             <script>
                                                 var objCal1 = new AMIB.persianCalendar( 'startTS' );
                                             </script>
@@ -161,7 +126,7 @@
                                     <div class="col-md-6">
                                         <fieldset class="form-group">
                                             <label for="endTS"> تاریخ پایان </label>
-                                            <input type="text" name="endTS" id="endTS" value="<?= @$form['endTS']?@jdate("Y/m/d",@$form['endTS']):'' ?>" class="form-control">
+                                            <input type="text" name="endTS" id="endTS" value="" class="form-control">
                                             <script>
                                                 var objCal1 = new AMIB.persianCalendar( 'endTS' );
                                             </script>
@@ -170,29 +135,22 @@
                                     <div class="col-md-6">
                                         <fieldset class="form-group">
                                             <label for="spw"> تعداد جلسات در هفته </label>
-                                            <input type="number" name="spw" id="spw" value="<?= @$form['spw'] ?>" class="form-control">
+                                            <input type="number" name="spw" id="spw" value="{{ old('spw') }}" class="form-control">
                                         </fieldset>
                                     </div>
                                     <div class="col-md-6">
                                         <fieldset class="form-group">
                                             <label for="state"> وضعیت کلاس</label>
-                                            <select name="state" id="state" class="custom-select">
+                                            <select name="state_s" id="state_s" class="custom-select">
                                                 <option value="">انتخاب کنید</option>
-                                                <?php
-                                                $setting = new Setting($db);
-                                                $setting->set_object_from_sql(array("type"=>"setData","name"=>"classState"));
-                                                $states = explode("\r\n",$setting->value);
-                                                foreach ($states as $state) {
-                                                    echo '<option ' . ($form['state'] == $state ? "selected" : "") . ' value="' . $state . '">' . $state . '</option>';
-                                                }
-                                                ?>
+                                                @foreach ($settings['classState'] as $setting)
+                                                    <option value="{{ $setting }}">{{ $setting }}</option>
+                                                @endforeach
                                             </select>
                                         </fieldset>
                                     </div>
                                     <div class="col-md-6">
-                                        <?=($uri[3][0] && $access['j'])?'<a href="'.baseDir.'/classstudent/'.$class->ID .'-/" class="btn btn-primary">افزودن دانشجو به کلاس</a>':''?>
                                         <input type="submit" name="submit" value="تایید" class="btn btn-success">
-                                        <?=($uri[3][0] && $access['j'])?'<a href="'.baseDir.'/classstudent/edit/'.$class->ID .'/" class="btn btn-warning">لیست دانشجویان کلاس</a>':''?>
                                     </div>
                                 </div>
                             </form>

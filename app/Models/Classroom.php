@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class Classroom extends Model
 {
     use HasFactory;
+    protected $guarded = ['id'];
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -19,5 +20,9 @@ class Classroom extends Model
     public function country()
     {
         return $this->belongsTo(Country::class);
+    }
+    public function student()
+    {
+        return $this->belongsToMany(Student::class);
     }
 }

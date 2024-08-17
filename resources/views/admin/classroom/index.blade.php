@@ -36,7 +36,7 @@
 
                                 <form method="get" action="{{ route('classrooms.index') }}" id="filterForm">
                                     <div class="card-header">
-                                        <h4 class="card-title">لیست مجتمع‌ها</h4>
+                                        <h4 class="card-title">لیست کلاس‌ها</h4>
                                         <br>
                                     </div>
 
@@ -109,7 +109,7 @@
                                                         <td>@if($row->convene_id) <a href="{{ route('convenes.edit',$row->convene_id) }}">{{$row->convene->name}}</a><br> @endif</td>
                                                         <td>{{ @$row->country->title }}</td>
                                                         <td>{{ @$row->country->title }}</td>
-                                                        <td>count student</td>
+                                                        <td>{{ count($row->student) }}</td>
                                                         <td>{{ $row->sex_s }}</td>
                                                         <td>{{ $row->state_s }}</td>
                                                         <td>

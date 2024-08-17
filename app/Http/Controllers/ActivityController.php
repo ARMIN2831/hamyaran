@@ -59,7 +59,7 @@ class ActivityController extends Controller
             $activity = Activity::create($request->all());
             if ($image) $activity->image = $image;
             $activity->save();
-            return redirect()->route('activities.index')->with('success','دوره با موفقیت ساخته شد.');
+            return redirect()->route('activities.index')->with('success','فعالیت با موفقیت ساخته شد.');
         }
         return redirect()->route('dashboard')->with('failed','شما به این بخش دسترسی ندارید!');
     }
@@ -101,7 +101,7 @@ class ActivityController extends Controller
             if ($image) $activity->image = $image;
             $activity->update($request->all());
             $activity->save();
-            return redirect()->route('activities.index')->with('success','دوره با موفقیت اپدیت شد.');
+            return redirect()->route('activities.index')->with('success','فعالیت با موفقیت اپدیت شد.');
         }
         return redirect()->route('dashboard')->with('failed','شما به این بخش دسترسی ندارید!');
     }
@@ -113,7 +113,7 @@ class ActivityController extends Controller
     {
         if (auth()->user()->can('delete activity')) {
             $activity->delete();
-            return redirect()->route('activities.index')->with('success','دوره با موفقیت حذف شد.');
+            return redirect()->route('activities.index')->with('success','فعالیت با موفقیت حذف شد.');
         }
         return redirect()->route('dashboard')->with('failed','شما به این بخش دسترسی ندارید!');
     }

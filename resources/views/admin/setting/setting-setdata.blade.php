@@ -1,6 +1,6 @@
-<?php
-if (!$access['q']) {redirect(""); exit();}
-?>
+@extends('layouts.app')
+
+@section('content')
 <div class="app-content content">
     <div class="content-overlay"></div>
     <div class="content-wrapper">
@@ -16,6 +16,11 @@ if (!$access['q']) {redirect(""); exit();}
                                 <li class="breadcrumb-item active">ورودی اطلاعات
                                 </li>
                             </ol>
+                            @if(session('success'))
+                                <div style="margin-top: 20px;margin-bottom: 0" class="alert alert-success">
+                                    {{ session('success') }}
+                                </div>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -27,42 +32,21 @@ if (!$access['q']) {redirect(""); exit();}
                 <div class="row">
                     <div class="col-md-12">
                         <div class="card px-2">
-                            <form method="post">
+                            <form action="{{ route('setting.update') }}" method="post">
+                                @csrf
                                 <div class="card-header">
                                     <h4 class="card-title">تعریف اطلاعات ورودی فرم‌ها:</h4>
                                 </div>
                                 <div class="row">
-                                    <?php
-                                    $setting = new Setting($db);
-                                    $settings = $setting->get_object_data(['type'=>'setData']);
-
-                                    if ($post['submit']){
-                                        $form = get_form_data_html();
-                                        unset($form['submit']);
-                                        foreach ($form as $item=>$value){
-                                            $row = search_2D_array('name',$item,$settings);
-                                            $setting->set_vars_from_array($row);
-                                            $setting->value = $value;
-                                            $setting->save_object_data();
-                                        }
-
-                                        echo '
-                                        <div class="col-md-12">
-                                            <p class="alert alert-success">ثبت اطلاعات انجام شد.</p>
-                                        </div>';
-                                        $settings = $setting->get_object_data(['type'=>'setData']);
-                                    }
-
-                                    foreach ($settings as list('name'=>$name,'value'=>$value)){
-                                        echo '
+                                    @foreach($settings as $setting)
                                         <div class="col-md-6">
                                             <fieldset class="form-group">
-                                                <label for="'.$name.'"> '.$name.' </label>
-                                                <textarea class="form-control" name="'.$name.'" id="'.$name.'" rows="3">'.$value.'</textarea>
+                                                <label for="{{ $setting->name }}">{{ $setting->name }}</label>
+                                                <textarea class="form-control" name="{{ $setting->name }}" id="{{ $setting->name }}" rows="3">{{ $setting->value }}</textarea>
                                             </fieldset>
-                                        </div>';
-                                    }
-                                    ?>
+                                        </div>
+                                    @endforeach
+
                                 </div>
                                 <div class="col-md-6">
                                     <input type="submit" name="submit" value="تایید" class="btn btn-success">
@@ -76,3 +60,4 @@ if (!$access['q']) {redirect(""); exit();}
         </div>
     </div>
 </div>
+@endsection

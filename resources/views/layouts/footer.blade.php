@@ -59,6 +59,51 @@
     });
 
 </script>
+<script>
+    $(document).ready(function() {
+        $('.classStudent-student-select').select2({
+            placeholder: 'جستجوی دانشجو...',
+            minimumInputLength: 3,
+            ajax: {
+                url: '{{ route("classStudents.searchStudent") }}',
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        s: params.term
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: data
+                    };
+                },
+                cache: true
+            }
+        });
+        $('.classStudent-class-select').select2({
+            placeholder: 'جستجوی دانشجو...',
+            minimumInputLength: 3,
+            ajax: {
+                url: '{{ route("classStudents.searchClass") }}',
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        c: params.term
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: data
+                    };
+                },
+                cache: true
+            }
+        });
+    });
+
+</script>
 <!-- END: Page JS-->
 
 {{--

@@ -69,6 +69,9 @@ class RolePermissionSeeder extends Seeder
             //'one user' => 'هیچکدام',
 
             //'add student to class' => 'افزودن دانشجو به کلاس'
+
+            //'setting db' => 'تنظیمات پایگاه داده',
+            //'setting setdata' => 'تنظیمات ورودی اطلاعات',
         ];
 
         foreach ($permissions as $key => $permission) {

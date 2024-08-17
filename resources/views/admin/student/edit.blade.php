@@ -354,16 +354,12 @@
 
                                         <div class="col-12 row">
                                             <input type="submit" name="submit" value="تایید" class="btn btn-success">
-                                            @if(auth()->user()->can('add student to class')) <a href="'.baseDir.'/classstudent/-'.$student->ID .'/" class="btn btn-primary">افزودن دانشجو به کلاس</a> @endif
+                                            @if(auth()->user()->can('view classStudent')) <a href="{{ route('classStudents.index', ['student_id' => $student->id]) }}" class="btn btn-primary">افزودن دانشجو به کلاس</a> @endif
                                         </div>
                                     </div>
                                 </form>
                                 @if(auth()->user()->can('view activity'))
-                                <br> &nbsp;
-                                <form method="post" action="'.baseDir.'/act/edit/" class="w-25">
-                                    <input type="hidden" name="studentID" value="'.$student->ID .'">
-                                    <input type="submit" name="submit" value="نمایش فعالیت‌های دانشجو" class="btn btn-warning">
-                                </form>
+                                    <a href="{{ route('activities.index') }}?student_id={{ $student->id }}" class="btn btn-warning">نمایش فعالیت‌های دانشجو</a>
                                 @endif
                             </div>
                         </div>
