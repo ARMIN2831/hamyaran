@@ -49,4 +49,8 @@ class User extends Authenticatable
     {
         return $this->hasOne(Convene::class);
     }
+    public function conveneB()
+    {
+        return $this->belongsTo(Convene::class,'convene_id','id');
+    }
 }

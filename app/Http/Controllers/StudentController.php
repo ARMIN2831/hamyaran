@@ -36,7 +36,10 @@ class StudentController extends Controller
             $countries = Country::get();
             $users = [];
             if ($user->can('all user')) $users = User::with('convene')->get();
-            if ($user->can('some user')) $users = User::where('user_id',$user->id)->with('convene')->get();
+            if ($user->can('some user')) $users = User::whereHas('conveneB', function($query) use ($user) {
+                $query->where('user_id', $user->id);
+            })->get();
+
             $settings = $this->loadSetting(['language', 'sex', 'education']);
             return view('admin.student.create', compact('users', 'countries', 'settings'));
         }
@@ -58,8 +61,9 @@ class StudentController extends Controller
             if ($request->endTS){
                 if (strpos($request->endTS, ':') !== false) $endTS = Jalalian::fromFormat('Y/n/j H:i:s', $request->endTS)->getTimestamp();
                 else $endTS = Jalalian::fromFormat('Y/n/j', $request->endTS)->getTimestamp();
-                $request->merge(['startTS' => $endTS]);
+                $request->merge(['endTS' => $endTS]);
             }
+            if ($request->mobile) $request->merge(['mobile'=>$request->c_mobile.'-'.$request->mobile]);
             Student::create($request->all());
             return redirect()->route('students.index')->with('success','دانشجو با موفقیت ساخته شد.');
         }
@@ -77,7 +81,9 @@ class StudentController extends Controller
             $countries = Country::get();
             $users = [];
             if ($user->can('all user')) $users = User::with('convene')->get();
-            if ($user->can('some user')) $users = User::where('user_id',$user->id)->with('convene')->get();
+            if ($user->can('some user')) $users = User::whereHas('conveneB', function($query) use ($user) {
+                $query->where('user_id', $user->id);
+            })->get();
             return view('admin.student.edit', compact('student', 'settings', 'countries', 'users'));
         }
         return redirect()->route('dashboard')->with('failed','شما به این بخش دسترسی ندارید!');
@@ -108,6 +114,7 @@ class StudentController extends Controller
             if ($passportImg) $student->passportImg = $passportImg;
             if ($evidenceImg) $student->evidenceImg = $evidenceImg;
 
+            if ($request->mobile) $request->merge(['mobile'=>$request->c_mobile.'-'.$request->mobile]);
             $student->update($request->except('profileImg'));
             $student->save();
             return redirect()->route('students.index')->with('success','دانشجو با موفقیت اپدیت شد.');

@@ -72,8 +72,8 @@
                                             <fieldset class="form-group">
                                                 <label for="mobile"> شماره موبایل </label>
                                                 <span class="row w-100 mx-auto">
-                    <input type="text" name="mobile" id="mobile" value="{{ $institute->mobile }}" placeholder="9123334455" class="form-control dir-ltr w-80">
-                    <input type="text" name="c_mobile" id="c_mobile" value="{{ $institute->c_mobile }}" placeholder="+98" class="form-control dir-ltr w-20">
+                    <input type="text" name="mobile" id="mobile" value="{{ @explode(' ',$institute->mobile,2)[1] }}" placeholder="9123334455" class="form-control dir-ltr w-80">
+                    <input type="text" name="c_mobile" id="c_mobile" value="{{ @explode(' ',$institute->mobile)[0] }}" placeholder="+98" class="form-control dir-ltr w-20">
                 </span>
                                             </fieldset>
                                         </div>
@@ -81,8 +81,8 @@
                                             <fieldset class="form-group">
                                                 <label for="whatsapp"> شماره واتساپ </label>
                                                 <span class="row w-100 mx-auto">
-                    <input type="text" name="whatsapp" id="whatsapp" value="{{ $institute->whatsapp }}" placeholder="9123334455" class="form-control dir-ltr w-80">
-                    <input type="text" name="c_whatsapp" id="whatsapp" value="{{ $institute->c_whatsapp }}" placeholder="+98" class="form-control dir-ltr w-20">
+                    <input type="text" name="whatsapp" id="whatsapp" value="{{ @explode(' ',$institute->whatsapp,2)[1] }}" placeholder="9123334455" class="form-control dir-ltr w-80">
+                    <input type="text" name="c_whatsapp" id="whatsapp" value="{{ @explode(' ',$institute->whatsapp)[0] }}" placeholder="+98" class="form-control dir-ltr w-20">
                 </span>
                                             </fieldset>
                                         </div>

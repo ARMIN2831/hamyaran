@@ -33,7 +33,9 @@ class ClassroomController extends Controller
         if ($user->can('create classroom')) {
             $users = [];
             if ($user->can('all user')) $users = User::with('convene')->get();
-            if ($user->can('some user')) $users = User::where('user_id',$user->id)->with('convene')->get();
+            if ($user->can('some user')) $users = User::whereHas('conveneB', function($query) use ($user) {
+                $query->where('user_id', $user->id);
+            })->get();
 
             return view('admin.classroom.create',compact('users'));
         }

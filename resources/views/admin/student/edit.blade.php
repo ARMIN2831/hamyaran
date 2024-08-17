@@ -144,8 +144,8 @@
                                             <fieldset class="form-group">
                                                 <label for="mobile"> شماره موبایل </label>
                                                 <span class="row w-100 mx-auto">
-                    <input type="text" name="mobile" id="mobile" value="{{ $student->mobile }}" placeholder="9123334455" class="form-control dir-ltr w-80">
-                    <input type="text" name="c_mobile" id="c_mobile" value="{{ $student->c_mobile }}" placeholder="+98" class="form-control dir-ltr w-20">
+                    <input type="text" name="mobile" id="mobile" value="{{ @explode('-',$student->mobile,2)[1] }}" placeholder="9123334455" class="form-control dir-ltr w-80">
+                    <input type="text" name="c_mobile" id="c_mobile" value="{{ @explode('-',$student->mobile)[0] }}" placeholder="+98" class="form-control dir-ltr w-20">
                 </span>
                                             </fieldset>
                                         </div>

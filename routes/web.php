@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\ClassroomController;
 use App\Http\Controllers\ConveneController;
 use App\Http\Controllers\CourseController;
@@ -20,6 +21,9 @@ Route::prefix('dashboard')->middleware('checkLogin')->group(function () {
     Route::resource('classrooms', ClassroomController::class)->except('show');
     Route::resource('institutes', InstituteController::class)->except('show');
     Route::resource('students', StudentController::class)->except('show');
+    Route::resource('activities', ActivityController::class)->except('show');
+
+    Route::get('/students/search', [ActivityController::class, 'search'])->name('students.search');
     Route::get('logout', [UserController::class, 'logout'])->name('logout')->middleware('checkLogin');
 });
 Route::get('login', [UserController::class, 'loginIndex'])->name('loginIndex')->middleware('logged');

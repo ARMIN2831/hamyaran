@@ -26,7 +26,39 @@
 <script src="{{ asset('public/js/scripts/pages/dashboard-analytics.js?v1.2.8') }}"></script>
 <script src="{{ asset('public/main.js?v1.2.8') }}"></script>
 
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('.activity-select').select2({
+            placeholder: 'جستجوی دانشجو...',
+            minimumInputLength: 3,
+            ajax: {
+                url: '{{ route("students.search") }}',
+                dataType: 'json',
+                delay: 250,
+                data: function (params) {
+                    return {
+                        q: params.term
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: data
+                    };
+                },
+                cache: true
+            }
+        });
 
+        $('.activity-select-2').on('select2:select', function (e) {
+            var studentId = e.params.data.id;
+            window.location.href = '{{ route("activities.index") }}?student_id=' + studentId;
+        });
+    });
+
+</script>
 <!-- END: Page JS-->
 
 {{--

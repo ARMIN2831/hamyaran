@@ -36,7 +36,9 @@ class InstituteController extends Controller
             $countries = Country::get();
             $users = [];
             if ($user->can('all user')) $users = User::with('convene')->get();
-            if ($user->can('some user')) $users = User::where('user_id',$user->id)->with('convene')->get();
+            if ($user->can('some user')) $users = User::whereHas('conveneB', function($query) use ($user) {
+                $query->where('user_id', $user->id);
+            })->get();
             $settings = $this->loadSetting(['language']);
             return view('admin.institute.create', compact('users', 'countries', 'settings'));
         }
@@ -60,6 +62,8 @@ class InstituteController extends Controller
                 else $timeinterface = Jalalian::fromFormat('Y/n/j', $request->timeinterface)->getTimestamp();
                 $request->merge(['timeinterface' => $timeinterface]);
             }
+            if ($request->mobile) $request->merge(['mobile'=>$request->c_mobile.' '.$request->mobile]);
+            if ($request->whatsapp) $request->merge(['mobile'=>$request->c_whatsapp.' '.$request->whatsapp]);
             Institute::create($request->all());
             return redirect()->route('institutes.index')->with('success','موسسه با موفقیت ساخته شد.');
         }
@@ -77,7 +81,9 @@ class InstituteController extends Controller
             $countries = Country::get();
             $users = [];
             if ($user->can('all user')) $users = User::with('convene')->get();
-            if ($user->can('some user')) $users = User::where('user_id',$user->id)->with('convene')->get();
+            if ($user->can('some user')) $users = User::whereHas('conveneB', function($query) use ($user) {
+                $query->where('user_id', $user->id);
+            })->get();
             return view('admin.institute.edit', compact('institute', 'settings', 'countries', 'users'));
         }
         return redirect()->route('dashboard')->with('failed','شما به این بخش دسترسی ندارید!');
@@ -100,6 +106,8 @@ class InstituteController extends Controller
                 else $timeinterface = Jalalian::fromFormat('Y/n/j', $request->timeinterface)->getTimestamp();
                 $request->merge(['timeinterface' => $timeinterface]);
             }
+            if ($request->mobile) $request->merge(['mobile'=>$request->c_mobile.' '.$request->mobile]);
+            if ($request->whatsapp) $request->merge(['mobile'=>$request->c_whatsapp.' '.$request->whatsapp]);
             $institute->update($request->all());
             return redirect()->route('institutes.index')->with('success','موسسه با موفقیت اپدیت شد.');
         }

@@ -159,9 +159,9 @@
             <li class=" navigation-header"><span>دسترسی‌ها</span></li>
             <li class="nav-item"><a href="#"><i class="bx bxs-bulb"></i><span class="menu-title" data-i18n="Invoice">فعالیت‌های دانشجویان</span></a>
                 <ul class="menu-content">
-                    <li><a href="{{ env('APP_URL') }}/act/add"><i class="bx bx-left-arrow-alt"></i><span
+                    <li><a href="{{ route('activities.create') }}"><i class="bx bx-left-arrow-alt"></i><span
                                 class="menu-item" data-i18n="Invoice List">افزودن فعالیت</span></a></li>
-                    <li><a href="{{ env('APP_URL') }}/act/edit"><i class="bx bx-left-arrow-alt"></i><span
+                    <li><a href="{{ route('activities.index') }}"><i class="bx bx-left-arrow-alt"></i><span
                                 class="menu-item" data-i18n="Invoice List">ویرایش فعالیت‌ها</span></a></li>
                 </ul>
             </li>

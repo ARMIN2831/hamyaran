@@ -57,12 +57,15 @@ abstract class Controller
     public function uploadFile($request, $name, $model, $path)
     {
         if ($request->hasFile($name)) {
-            if ($model->$name) {
-                $oldImagePath = public_path($path . '/' . $model->$name);
-                if (file_exists($oldImagePath)) {
-                    unlink($oldImagePath);
+            if ($model){
+                if ($model->$name) {
+                    $oldImagePath = public_path($path . '/' . $model->$name);
+                    if (file_exists($oldImagePath)) {
+                        unlink($oldImagePath);
+                    }
                 }
             }
+
 
 
             $file = $request->file($name);

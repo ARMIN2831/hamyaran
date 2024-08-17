@@ -70,7 +70,6 @@ class UserController extends Controller
             $convenes = Convene::get();
             $settings = $this->loadSetting(['language', 'education', 'religious', 'religion2', 'opinionAboutIran', 'financialSituation', 'donation', 'sex']);
             $countries = Country::get();
-
             return view('admin.user.edit', compact('user', 'roles', 'userRole', 'convenes', 'settings', 'countries'));
         }
         return redirect()->route('dashboard')->with('failed', 'شما به این بخش دسترسی ندارید!');
@@ -90,9 +89,8 @@ class UserController extends Controller
             } else {
                 $input = Arr::except($input, ['password']);
             }
-
+            if ($request->mobile) $input['mobile'] = $request->c_mobile . '-' . $request->mobile;
             $user->update($input);
-
             if ($request->has('role')) {
                 $user->syncRoles($request->role);
             }
