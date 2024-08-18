@@ -11,15 +11,21 @@ class SettingController extends Controller
 {
     public function setdata()
     {
-        $settings = Setting::get();
-        return view('admin.setting.setting-setdata',compact('settings'));
+        if (auth()->user()->can('setting setdata')){
+            $settings = Setting::get();
+            return view('admin.setting.setting-setdata',compact('settings'));
+        }
+        return redirect()->route('dashboard')->with('failed','شما به این بخش دسترسی ندارید!');
     }
     public function update(Request $request)
     {
-        foreach ($request->input() as $key => $row){
-            Setting::where('name',$key)->update(['value'=>$row]);
+        if (auth()->user()->can('setting setdata')) {
+            foreach ($request->input() as $key => $row) {
+                Setting::where('name', $key)->update(['value' => $row]);
+            }
+            return redirect()->route('setting.setdata')->with('success', 'اطلاعات با موفقیت ذخیره شد!');
         }
-        return redirect()->route('setting.setdata')->with('success','اطلاعات با موفقیت ذخیره شد!');
+        return redirect()->route('dashboard')->with('failed','شما به این بخش دسترسی ندارید!');
     }
 
 

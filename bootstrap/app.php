@@ -17,6 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
             'logged' => \App\Http\Middleware\logged::class,
             'checkLogin' => \App\Http\Middleware\checkLogin::class,
+            'settingDB' => \App\Http\Middleware\settingDB::class
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

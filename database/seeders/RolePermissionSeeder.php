@@ -72,6 +72,8 @@ class RolePermissionSeeder extends Seeder
 
             //'setting db' => 'تنظیمات پایگاه داده',
             //'setting setdata' => 'تنظیمات ورودی اطلاعات',
+
+            'manage ticket' => 'مدیریت تیکت ها'
         ];
 
         foreach ($permissions as $key => $permission) {

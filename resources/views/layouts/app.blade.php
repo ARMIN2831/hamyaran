@@ -19,7 +19,7 @@
                                     class="ficon bx bx-menu"></i></a></li>
                     </ul>
                     <ul class="nav navbar-nav bookmark-icons">
-                        <li class="nav-item d-none d-lg-block"><a class="nav-link" href="{{ env('APP_URL') }}/ticket/"
+                        <li class="nav-item d-none d-lg-block"><a class="nav-link" href="{{ route('tickets.index') }}"
                                                                   data-toggle="tooltip" data-placement="top"
                                                                   title="پیام‌ها"><i class="ficon bx bx-chat"></i>
                             </a>
@@ -140,7 +140,7 @@
     <div class="main-menu-content">
         <ul class="navigation navigation-main" id="main-menu-navigation" data-menu="menu-navigation" data-icon-style="">
 
-            <li class="nav-item"><a href="{{ env('APP_URL') }}/#"><i class="bx bx-pie-chart"></i><span
+            <li class="nav-item"><a href="{{ route('dashboard') }}"><i class="bx bx-pie-chart"></i><span
                         class="menu-title" data-i18n="Dashboard">گزارشات</span>
                 </a>
                 <ul class="menu-content">
@@ -248,13 +248,13 @@
                     ?>
                 </a>
                 <ul class="menu-content">
-                    <li><a href="{{ env('APP_URL') }}/ticket/add/"><i class="bx bx-left-arrow-alt"></i><span
+                    <li><a href="{{ route('tickets.create') }}"><i class="bx bx-left-arrow-alt"></i><span
                                 class="menu-item" data-i18n="Invoice List">ایجاد تیکت</span></a></li>
-                    <li><a href="{{ env('APP_URL') }}/ticket/"><i class="bx bx-left-arrow-alt"></i><span
+                    <li><a href="{{ route('tickets.index') }}"><i class="bx bx-left-arrow-alt"></i><span
                                 class="menu-item" data-i18n="Invoice List">مشاهده پیام‌ها</span></a></li>
-                    <li><a href="'.baseDir.'/ticket-manage/"><i class="bx bx-left-arrow-alt"></i><span class="menu-item"
+                    @if(auth()->user()->can('manage ticket'))<li><a href="{{ route('tickets.manage') }}"><i class="bx bx-left-arrow-alt"></i><span class="menu-item"
                                                                                                        data-i18n="Invoice List">مدیریت تیکت‌ها</span></a>
-                    </li>
+                    </li>@endif
                 </ul>
             </li>
             <li class="nav-item"><a href="#"><i class="bx bx-user-circle"></i><span class="menu-title"
@@ -274,8 +274,8 @@
                                 class="menu-item" data-i18n="Invoice List">پایگاه داده</span></a></li>
                     <li><a href="{{ route('setting.setdata') }}"><i class="bx bx-left-arrow-alt"></i><span
                                 class="menu-item" data-i18n="Invoice List">ورودی اطلاعات</span></a></li>
-                    <li><a href="{{ env('APP_URL') }}/setting/email/"><i class="bx bx-left-arrow-alt"></i><span
-                                class="menu-item" data-i18n="Invoice List">ایمیل</span></a></li>
+                    {{--<li><a href="{{ env('APP_URL') }}/setting/email/"><i class="bx bx-left-arrow-alt"></i><span
+                                class="menu-item" data-i18n="Invoice List">ایمیل</span></a></li>--}}
                 </ul>
             </li>
 
