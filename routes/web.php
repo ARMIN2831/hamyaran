@@ -7,6 +7,7 @@ use App\Http\Controllers\ConveneController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\InstituteController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ReportController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\StudentController;
@@ -60,6 +61,15 @@ Route::prefix('dashboard')->middleware('checkLogin')->group(function () {
             Route::get('db/restore/{filename}', [SettingController::class, 'restore'])->name('backup.restore');
             Route::get('db/delete/{filename}', [SettingController::class, 'delete'])->name('backup.delete');
         });
+    });
+
+
+    Route::prefix('report')->group(function () {
+        Route::get('student', [ReportController::class, 'student'])->name('report.student');
+        Route::get('worldMap', [ReportController::class, 'worldMap'])->name('report.worldMap');
+        Route::get('export', [ReportController::class, 'export'])->name('report.export');
+        Route::get('system', [ReportController::class, 'system'])->name('report.system');
+
     });
 });
 

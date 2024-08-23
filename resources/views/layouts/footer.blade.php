@@ -82,7 +82,7 @@
             }
         });
         $('.classStudent-class-select').select2({
-            placeholder: 'جستجوی دانشجو...',
+            placeholder: 'جستجوی کلاس...',
             minimumInputLength: 3,
             ajax: {
                 url: '{{ route("classStudents.searchClass") }}',
@@ -108,6 +108,15 @@
 
 {{--
 <!-- BEGIN: Page Vendor JS-->
+
+<!-- END: Page Vendor JS-->
+
+<script src="{{ asset('public/js/scripts/select2.full.min.js?v1.2.8') }}"></script>
+<script src="{{ asset('public/js/scripts/form-select2.min.js?v1.2.8') }}"></script>
+
+
+
+--}}
 <script src="{{ asset('public/vendors/js/tables/datatable/datatables.min.js?v1.2.8') }}"></script>
 <script src="{{ asset('public/vendors/js/tables/datatable/dataTables.bootstrap4.min.js?v1.2.8') }}"></script>
 <script src="{{ asset('public/vendors/js/tables/datatable/dataTables.buttons.min.js?v1.2.8') }}"></script>
@@ -116,16 +125,8 @@
 <script src="{{ asset('public/vendors/js/tables/datatable/buttons.bootstrap.min.js?v1.2.8') }}"></script>
 <script src="{{ asset('public/vendors/js/tables/datatable/pdfmake.min.js?v1.2.8') }}"></script>
 <script src="{{ asset('public/vendors/js/tables/datatable/vfs_fonts.js?v1.2.8') }}"></script>
-<!-- END: Page Vendor JS-->
-
-<script src="{{ asset('public/js/scripts/select2.full.min.js?v1.2.8') }}"></script>
-<script src="{{ asset('public/js/scripts/form-select2.min.js?v1.2.8') }}"></script>
-
-
 <script src="{{ asset('public/vendors/js/charts/chart.min.js?v1.2.8') }}"></script>
 <script src="{{ asset('public/vendors/js/charts/chart-chartjs.js?v1.2.8') }}"></script>
---}}
-
 
 </body>
 

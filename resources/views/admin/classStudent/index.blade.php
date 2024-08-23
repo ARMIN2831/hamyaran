@@ -36,8 +36,8 @@
                                     <div class="row">
                                         <div class="col-md-6">
                                             <fieldset class="form-group">
-                                                <label for="class_id"> کلاس </label>
-                                                <select style="width: 100%;margin-right: 0" name="class_id" id="class_id" class="select2 form-control classStudent-class-select">
+                                                <label for="classroom_id"> کلاس </label>
+                                                <select style="width: 100%;margin-right: 0" name="classroom_id" id="classroom_id" class="select2 form-control classStudent-class-select">
                                                     <option value="">انتخاب کنید</option>
                                                     @if($classroom) <option selected="selected" value="{{ $classroom->id }}">{{ $classroom->name }}</option> @endif
                                                 </select>

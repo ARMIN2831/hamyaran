@@ -14,4 +14,8 @@ class Course extends Model
     {
         return $this->belongsToMany(Convene::class);
     }
+    public function classrooms()
+    {
+        return $this->hasMany(Classroom::class);
+    }
 }

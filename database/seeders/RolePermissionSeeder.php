@@ -73,7 +73,12 @@ class RolePermissionSeeder extends Seeder
             //'setting db' => 'تنظیمات پایگاه داده',
             //'setting setdata' => 'تنظیمات ورودی اطلاعات',
 
-            'manage ticket' => 'مدیریت تیکت ها'
+            //'manage ticket' => 'مدیریت تیکت ها'
+
+            //'student report' => 'گزارش دانشجویان',
+            //'worldMap report' => 'گزارش توزیع پراکندگی',
+            //'export report' => 'گزارش گیری',
+            //'system report' => 'گزارش سامانه',
         ];
 
         foreach ($permissions as $key => $permission) {

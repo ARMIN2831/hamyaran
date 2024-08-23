@@ -19,7 +19,7 @@
             $setter = new Manager($db);
             $setters = $setter->get_object_data();
 
-            include "chart-show-filter.php";
+            include "chart-show-filter.blade.php";
 
             ?>
         </p>

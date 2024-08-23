@@ -25,4 +25,8 @@ class Classroom extends Model
     {
         return $this->belongsToMany(Student::class);
     }
+    public function convenes()
+    {
+        return $this->hasMany(Convene::class);
+    }
 }

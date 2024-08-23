@@ -36,11 +36,11 @@ class classStudentController extends Controller
     public function store(Request $request)
     {
         if (auth()->user()->can('create classStudent')) {
-            $classroomId = $request->input('class_id');
+            $classroomId = $request->input('classroom_id');
             $studentId = $request->input('student_id');
             $classroom = Classroom::findOrFail($classroomId);
             $student = Student::findOrFail($studentId);
-            $classroom->students()->attach($student->id, ['ts' => now()]);
+            $classroom->student()->attach($student->id, ['ts' => now()]);
             return redirect()->route('classStudents.index')->with('success','کلاس‌ با موفقیت ساخته شد.');
         }
         return redirect()->route('dashboard')->with('failed','شما به این بخش دسترسی ندارید!');
@@ -82,9 +82,9 @@ class classStudentController extends Controller
     public function searchClass(Request $request)
     {
         $search = $request->get('c');
-        $students = Classroom::where('name', 'like', '%' . $search . '%')
+        $classroom = Classroom::where('name', 'like', '%' . $search . '%')
             ->select('id', 'name')
             ->get();
-        return response()->json($students);
+        return response()->json($classroom);
     }
 }

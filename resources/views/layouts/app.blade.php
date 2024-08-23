@@ -144,14 +144,14 @@
                         class="menu-title" data-i18n="Dashboard">گزارشات</span>
                 </a>
                 <ul class="menu-content">
-                    <li><a href="{{ env('APP_URL') }}/chart/"><i class="bx bx-right-arrow-alt"></i><span
-                                class="menu-item" data-i18n="eCommerce">نمودار دانشجویان</span></a></li>
-                    <li><a href="{{ env('APP_URL') }}/world-map/"><i class="bx bx-right-arrow-alt"></i><span
-                                class="menu-item" data-i18n="eCommerce">توزیع پراکندگی</span></a></li>
-                    <li><a href="{{ env('APP_URL') }}/export/"><i class="bx bx-right-arrow-alt"></i><span
-                                class="menu-item" data-i18n="eCommerce">گزارش‌گیری</span></a></li>
-                    <li><a href="{{ env('APP_URL') }}/report/"><i class="bx bx-right-arrow-alt"></i><span
-                                class="menu-item" data-i18n="eCommerce">گزارشات سامانه</span></a></li>
+                    @if(auth()->user()->can('student report'))<li><a href="{{ route('report.student') }}"><i class="bx bx-right-arrow-alt"></i><span
+                                class="menu-item" data-i18n="eCommerce">نمودار دانشجویان</span></a></li>@endif
+                        @if(auth()->user()->can('worldMap report'))<li><a href="{{ route('report.worldMap') }}"><i class="bx bx-right-arrow-alt"></i><span
+                                class="menu-item" data-i18n="eCommerce">توزیع پراکندگی</span></a></li>@endif
+                        @if(auth()->user()->can('export report'))<li><a href="{{ route('report.export') }}"><i class="bx bx-right-arrow-alt"></i><span
+                                class="menu-item" data-i18n="eCommerce">گزارش‌گیری</span></a></li>@endif
+                        @if(auth()->user()->can('system report'))<li><a href="{{ route('report.system') }}"><i class="bx bx-right-arrow-alt"></i><span
+                                class="menu-item" data-i18n="eCommerce">گزارشات سامانه</span></a></li>@endif
                 </ul>
             </li>
             <li class=" navigation-header"><span>دسترسی‌ها</span></li>
