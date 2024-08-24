@@ -4,11 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\institute\InstituteStoreRequest;
 use App\Http\Requests\institute\InstituteUpdateRequest;
+use App\Jobs\ImportInstitutesJob;
+use App\Jobs\ImportStudentsJob;
 use App\Models\Convene;
 use App\Models\Country;
 use App\Models\Institute;
+use App\Models\Student;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Morilog\Jalali\Jalalian;
 
 class InstituteController extends Controller
@@ -124,5 +128,39 @@ class InstituteController extends Controller
             return redirect()->route('institutes.index')->with('success','موسسه با موفقیت حذف شد.');
         }
         return redirect()->route('dashboard')->with('failed','شما به این بخش دسترسی ندارید!');
+    }
+    public function showUploadForm()
+    {
+        $log = Storage::disk('local')->exists('upload_log_institute.txt') ? Storage::get('upload_log_institute.txt') : null;
+        return view('admin.institute.ins-add-excel', compact('log'));
+    }
+
+    public function uploadExcel(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx|max:1024',
+            'error' => 'required|string',
+        ]);
+        $filePath = $request->file('file')->storeAs('uploads', 'institute.xlsx');
+        Storage::put('upload_log_institute.txt', "File uploaded successfully at " . now() . "\n");
+
+        Institute::where('excel', 1)->update(['excel' => 0]);
+
+        ImportInstitutesJob::dispatch($filePath, $request->input('error'),auth()->user()->can('one user'));
+
+        return redirect()->route('institutes.upload')->with('success', 'File uploaded and processing started.');
+    }
+    public function rollbackLastUpload()
+    {
+        $filePath = storage_path('app/uploads/students.xlsx');
+        if (!file_exists($filePath)) {
+            return redirect()->route('institutes.upload')->with('error', 'No file to rollback.');
+        }
+
+        Institute::where('excel',1)->delete();
+
+        Storage::append('upload_log_institute.txt', "Rollback performed at " . now() . "\n");
+
+        return redirect()->route('institutes.upload')->with('success', 'Rollback successful.');
     }
 }

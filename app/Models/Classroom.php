@@ -23,7 +23,7 @@ class Classroom extends Model
     }
     public function student()
     {
-        return $this->belongsToMany(Student::class);
+        return $this->belongsToMany(Student::class)->withPivot('ts','score');
     }
     public function convenes()
     {

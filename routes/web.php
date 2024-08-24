@@ -34,9 +34,11 @@ Route::prefix('dashboard')->middleware('checkLogin')->group(function () {
     Route::get('tickets/manage', [TicketController::class,'manage'])->name('tickets.manage');
 
     Route::delete('classStudents/{classroom}/{student}', [ClassStudentController::class, 'destroy'])->name('classStudents.destroy');
+    Route::post('classStudents/{classroom}/{student}', [ClassStudentController::class, 'update'])->name('classStudents.update');
     Route::get('/students/search', [ActivityController::class, 'search'])->name('students.search');
     Route::get('/classStudents/searchStudent', [classStudentController::class, 'searchStudent'])->name('classStudents.searchStudent');
     Route::get('/classStudents/searchClass', [classStudentController::class, 'searchClass'])->name('classStudents.searchClass');
+    Route::get('/classStudents/exportExcel/{classroom}', [classStudentController::class, 'exportExcel'])->name('classStudents.exportExcel');
 
 
     Route::get('logout', [UserController::class, 'logout'])->name('logout')->middleware('checkLogin');
@@ -71,6 +73,13 @@ Route::prefix('dashboard')->middleware('checkLogin')->group(function () {
         Route::get('system', [ReportController::class, 'system'])->name('report.system');
 
     });
+    Route::get('/students/upload', [instituteController::class, 'showUploadForm'])->name('students.upload');
+    Route::post('/students/upload', [instituteController::class, 'uploadExcel'])->name('students.upload');
+    Route::post('/students/rollback', [instituteController::class, 'rollbackLastUpload'])->name('students.rollback');
+
+    Route::get('/institutes/upload', [instituteController::class, 'showUploadForm'])->name('institutes.upload');
+    Route::post('/institutes/upload', [instituteController::class, 'uploadExcel'])->name('institutes.upload');
+    Route::post('/institutes/rollback', [instituteController::class, 'rollbackLastUpload'])->name('institutes.rollback');
 });
 
 

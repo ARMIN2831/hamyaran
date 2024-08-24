@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\student\StudentStoreRequest;
 use App\Http\Requests\student\StudentUpdateRequest;
+use App\Jobs\ImportStudentsJob;
 use App\Models\Country;
 use App\Models\Student;
 use App\Models\User;
@@ -132,5 +133,39 @@ class StudentController extends Controller
             return redirect()->route('students.index')->with('success','دانشجو با موفقیت حذف شد.');
         }
         return redirect()->route('dashboard')->with('failed','شما به این بخش دسترسی ندارید!');
+    }
+    public function showUploadForm()
+    {
+        $log = Storage::disk('local')->exists('upload_log.txt') ? Storage::get('upload_log.txt') : null;
+        return view('admin.student.stu-add-excel', compact('log'));
+    }
+
+    public function uploadExcel(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx|max:1024',
+            'error' => 'required|string',
+        ]);
+        $filePath = $request->file('file')->storeAs('uploads', 'students.xlsx');
+        Storage::put('upload_log.txt', "File uploaded successfully at " . now() . "\n");
+
+        Student::where('excel', 1)->update(['excel' => 0]);
+
+        ImportStudentsJob::dispatch($filePath, $request->input('error'),auth()->user()->can('one user'));
+
+        return redirect()->route('students.upload')->with('success', 'File uploaded and processing started.');
+    }
+    public function rollbackLastUpload()
+    {
+        $filePath = storage_path('app/uploads/students.xlsx');
+        if (!file_exists($filePath)) {
+            return redirect()->route('students.upload')->with('error', 'No file to rollback.');
+        }
+
+        Student::where('excel',1)->delete();
+
+        Storage::append('upload_log.txt', "Rollback performed at " . now() . "\n");
+
+        return redirect()->route('students.upload')->with('success', 'Rollback successful.');
     }
 }

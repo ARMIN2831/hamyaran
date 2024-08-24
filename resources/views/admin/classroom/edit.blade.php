@@ -140,6 +140,18 @@
                                         </div>
                                         <div class="col-md-6">
                                             <fieldset class="form-group">
+                                                <label for="price"> مبلغ </label>
+                                                <input type="text" name="price" id="price" value="{{ $classroom->price }}" class="form-control">
+                                            </fieldset>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <fieldset class="form-group">
+                                                <label for="commission"> کمیسیون </label>
+                                                <input type="text" name="commission" id="commission" value="{{ $classroom->commission }}" class="form-control">
+                                            </fieldset>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <fieldset class="form-group">
                                                 <label for="state_s"> وضعیت کلاس</label>
                                                 <select name="state_s" id="state_s" class="custom-select">
                                                     <option value="">انتخاب کنید</option>
@@ -151,6 +163,7 @@
                                         </div>
                                         <div class="col-md-6">
                                             @if(auth()->user()->can('view classStudent')) <a href="{{ route('classStudents.index', ['class_id' => $classroom->id]) }}" class="btn btn-primary">افزودن دانشجو به کلاس</a> @endif
+                                            @if(auth()->user()->can('export class')) <a href="{{ route('classStudents.exportExcel', $classroom->id) }}" class="btn btn-primary">خروجی اکسل دانشجویان</a> @endif
                                             <input type="submit" name="submit" value="تایید" class="btn btn-success">
                                             @if(auth()->user()->can('edit classStudent')) <a href="{{ route('classStudents.edit', $classroom->id) }}" class="btn btn-warning">لیست دانشجویان کلاس</a> @endif
                                         </div>

@@ -168,7 +168,7 @@
                 <ul class="menu-content">
                     <li><a href="{{ route('students.create') }}"><i class="bx bx-left-arrow-alt"></i><span
                                 class="menu-item" data-i18n="Invoice List">افزودن دانشجو</span></a></li>
-                    <li><a href="{{ env('APP_URL') }}/stu/excel"><i class="bx bx-left-arrow-alt"></i><span
+                    <li><a href="{{ route('students.upload') }}"><i class="bx bx-left-arrow-alt"></i><span
                                 class="menu-item" data-i18n="Invoice List">افزودن دانشجو از اکسل</span></a></li>
                     <li><a href="{{ route('students.index') }}"><i class="bx bx-left-arrow-alt"></i><span
                                 class="menu-item" data-i18n="Invoice List">ویرایش دانشجویان</span></a></li>
@@ -179,7 +179,7 @@
                 <ul class="menu-content">
                     <li><a href="{{ route('institutes.create') }}"><i class="bx bx-left-arrow-alt"></i><span
                                 class="menu-item" data-i18n="Invoice List">افزودن موسسه</span></a></li>
-                    <li><a href="{{ env('APP_URL') }}/ins/excel"><i class="bx bx-left-arrow-alt"></i><span
+                    <li><a href="{{ route('institutes.upload') }}"><i class="bx bx-left-arrow-alt"></i><span
                                 class="menu-item" data-i18n="Invoice List">افزودن موسسه از اکسل</span></a></li>
                     <li><a href="{{ route('institutes.index') }}"><i class="bx bx-left-arrow-alt"></i><span
                                 class="menu-item" data-i18n="Invoice List">ویرایش موسسات</span></a></li>

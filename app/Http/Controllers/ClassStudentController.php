@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\ClassroomsExport;
 use App\Models\Classroom;
 use App\Models\Country;
 use App\Models\Course;
@@ -9,6 +10,7 @@ use App\Models\Student;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Maatwebsite\Excel\Facades\Excel;
 use Morilog\Jalali\Jalalian;
 
 class classStudentController extends Controller
@@ -41,7 +43,7 @@ class classStudentController extends Controller
             $classroom = Classroom::findOrFail($classroomId);
             $student = Student::findOrFail($studentId);
             $classroom->student()->attach($student->id, ['ts' => now()]);
-            return redirect()->route('classStudents.index')->with('success','کلاس‌ با موفقیت ساخته شد.');
+            return redirect()->route('classStudents.index')->with('success','دانشجوی کلاس‌ با موفقیت ساخته شد.');
         }
         return redirect()->route('dashboard')->with('failed','شما به این بخش دسترسی ندارید!');
     }
@@ -59,6 +61,19 @@ class classStudentController extends Controller
         return redirect()->route('dashboard')->with('failed','شما به این بخش دسترسی ندارید!');
     }
 
+    public function update(Request $request, Classroom $classroom, Student $student)
+    {
+        if (auth()->user()->can('edit classroom')) {
+            try {
+                $classroom->student()->updateExistingPivot($student->id, ['score' => (string) $request->score]);
+            } catch (\Exception $e) {
+
+            }
+            return redirect()->route('classStudents.edit',$classroom->id)->with('success','دانشجوی کلاس‌ با موفقیت حذف شد.');
+        }
+        return redirect()->route('dashboard')->with('failed','شما به این بخش دسترسی ندارید!');
+    }
+
     /**
      * Remove the specified resource from storage.
      */
@@ -66,7 +81,7 @@ class classStudentController extends Controller
     {
         if (auth()->user()->can('delete classStudent')) {
             $classroom->student()->detach($student->id);
-            return redirect()->route('classStudents.edit',$classroom->id)->with('success','کلاس‌ با موفقیت حذف شد.');
+            return redirect()->route('classStudents.edit',$classroom->id)->with('success','دانشجوی کلاس‌ با موفقیت حذف شد.');
         }
         return redirect()->route('dashboard')->with('failed','شما به این بخش دسترسی ندارید!');
     }
@@ -86,5 +101,9 @@ class classStudentController extends Controller
             ->select('id', 'name')
             ->get();
         return response()->json($classroom);
+    }
+    public function exportExcel(Classroom $classroom)
+    {
+        return Excel::download(new ClassroomsExport($classroom->id), 'students.xlsx');
     }
 }

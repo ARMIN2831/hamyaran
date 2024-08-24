@@ -79,6 +79,8 @@ class RolePermissionSeeder extends Seeder
             //'worldMap report' => 'گزارش توزیع پراکندگی',
             //'export report' => 'گزارش گیری',
             //'system report' => 'گزارش سامانه',
+
+            //'export class' => 'خروجی اکسل دانشجویان کلاس'
         ];
 
         foreach ($permissions as $key => $permission) {
