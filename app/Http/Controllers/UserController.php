@@ -54,7 +54,7 @@ class UserController extends Controller
                 $user->assignRole($request->role);
             }
 
-            return redirect()->route('users.index')->with('success', 'کاربر با موفقیت ساخته شد.');
+            return redirect()->route('users.edit',$user->id)->with('success', 'کاربر با موفقیت ساخته شد.');
         }
         return redirect()->route('dashboard')->with('failed', 'شما به این بخش دسترسی ندارید!');
     }
@@ -80,6 +80,7 @@ class UserController extends Controller
      */
     public function update(UserUpdateRequest $request, User $user)
     {
+        dd($request);
         if (auth()->user()->can('edit user')) {
             $request->validated();
             $input = $request->all();

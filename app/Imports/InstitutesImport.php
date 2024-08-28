@@ -4,7 +4,6 @@ namespace App\Imports;
 
 use App\Models\Country;
 use App\Models\Institute;
-use App\Models\Student;
 use App\Models\User;
 use Exception;
 use Illuminate\Support\Collection;
@@ -12,14 +11,16 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Concerns\ToCollection;
-use Maatwebsite\Excel\Concerns\ToModel;
+use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use Morilog\Jalali\Jalalian;
 
-class InstitutesImport implements ToCollection
+class InstitutesImport implements ToCollection, WithHeadingRow
 {
     private $errorHandling;
     private $user;
+    private $batchSize = 1000; // حجم دسته‌ها
 
-    public function __construct($errorHandling,$user)
+    public function __construct($errorHandling, $user)
     {
         $this->errorHandling = $errorHandling;
         $this->user = $user;
@@ -27,134 +28,143 @@ class InstitutesImport implements ToCollection
 
     public function collection(Collection $rows)
     {
-        DB::transaction(function () use ($rows) {
-            $countries = Country::get();
-            $users = User::get();
-            foreach ($rows as $rowIndex => $row) {
-                try {
-                    $errors = $this->validateRow($row);
+        $chunks = $rows->chunk($this->batchSize);
 
-                    if ($this->errorHandling == 'notSetAll' && $errors) {
-                        Log::error("Errors found at row $rowIndex, skipping entire import. errors: " . implode(', ', $errors));
-                        Storage::append('upload_log_institute.txt', "Errors found at row $rowIndex. Import aborted at " . now() . " (errors :" . implode(', ', $errors) . ")\n");
-                        return;
-                    }
+        foreach ($chunks as $chunk) {
+            DB::transaction(function () use ($chunk) {
+                $countries = Country::pluck('id', 'ISO2')->toArray();
+                $users = $this->user ? User::pluck('id', 'username')->toArray() : [];
 
-                    if ($this->errorHandling == 'notSetStu' && $errors) {
-                        Log::warning("Skipping institute at row $rowIndex due to errors: " . implode(', ', $errors));
-                        Storage::append('upload_log_institute.txt', "Errors found at row $rowIndex. Import aborted at " . now() . " (errors :" . implode(', ', $errors) . ")\n");
-                        continue;
-                    }
-                    $country_id = '';
-                    if ($row[1]){
-                        foreach ($countries as $country)
-                            if ($country->ISO2 == $row[1]){
-                                $country_id = $country->id;
-                                break;
+                foreach ($chunk as $rowIndex => $row) {
+                    try {
+                        $errors = $this->validateRow($row);
+
+                        if ($this->errorHandling == 'notSetAll' && $errors) {
+                            Log::error("Errors found at row $rowIndex, skipping entire import. errors: " . implode(', ', $errors));
+                            Storage::append('upload_log_institute.txt', "Errors found at row $rowIndex. Import aborted at " . now() . " (errors :" . implode(', ', $errors) . ")\n");
+                            return;
+                        }
+
+                        if ($this->errorHandling == 'notSetStu' && $errors) {
+                            Log::warning("Skipping institute at row $rowIndex due to errors: " . implode(', ', $errors));
+                            Storage::append('upload_log_institute.txt', "Errors found at row $rowIndex. Import aborted at " . now() . " (errors :" . implode(', ', $errors) . ")\n");
+                            continue;
+                        }
+
+                        $country_id = $countries[$row['country']] ?? null;
+                        $user_id = $this->user ? null : ($users[$row['setby']] ?? null);
+
+                        $endTS = '';
+                        $startTS = '';
+                        if (!isset($errors['startts'])) {
+                            $startTS = Jalalian::fromFormat('Y/n/j', $row['startts'])->getTimestamp();
+                        }
+                        if (!isset($errors['endts'])) {
+                            $endTS = Jalalian::fromFormat('Y/n/j', $row['endts'])->getTimestamp();
+                        }
+
+                        $instituteData = [
+                            'name' => $row['nameinstitute'],
+                            'country_id' => $country_id,
+                            'city' => $row['city'],
+                            'address' => $row['address'],
+                            'mobile' => $row['mobile'],
+                            'whatsapp' => $row['whatsapp'],
+                            'email' => $row['email'],
+                            'admin' => $row['admin'],
+                            'adminmail' => $row['adminmail'],
+                            'interface' => $row['interface'],
+                            'interfacemail' => $row['interfacemail'],
+                            'AboutInstitute' => $row['aboutinstitute'],
+                            'description' => $row['description'],
+                            'classInstituteType_s' => $row['typeinstitute'],
+                            'modelinstitute' => $row['modelinstitute'],
+                            'ActivityInstitute_s' => $row['activity'],
+                            'contacts' => $row['contacts'],
+                            'religious_s' => $row['religion'],
+                            'religion2_s' => $row['religion2'],
+                            'language_s' => $row['language'],
+                            'AssessmentInstitute_s' => $row['assessment'],
+                            'company' => $row['company'],
+                            'support' => $row['support'],
+                            'supportinterface' => $row['supportinterface'],
+                            'timeinterface' => $row['timeinterface'],
+                            'resultinterface' => $row['resultinterface'],
+                            'user_id' => $user_id,
+                            'startTS' => $startTS,
+                            'endTS' => $endTS,
+                            'excel' => 1,
+                        ];
+
+                        if ($this->errorHandling == 'set' && $errors) {
+                            foreach ($errors as $field => $error) {
+                                unset($instituteData[$field]);
                             }
-                    }
-
-                    $user_id = '';
-                    if ($this->user){
-                        $startTS = $row[26];
-                        $endTS = $row[27];
-                    }else{
-                        if ($row[26]){
-                            foreach ($users as $user)
-                                if ($user->email == $row[26]){
-                                    $user_id = $user->id;
-                                    break;
-                                }
                         }
-                        $startTS = $row[27];
-                        $endTS = $row[28];
+
+                        Institute::create($instituteData);
+
+                        Log::info("Institute at row $rowIndex successfully imported.");
+                        Storage::append('upload_log_institute.txt',"----Institute at row $rowIndex successfully imported at " . now() . "\n");
+                    } catch (Exception $e) {
+                        Log::error("Failed to import institute at row $rowIndex: " . $e->getMessage());
+                        Storage::append('upload_log_institute.txt', "Failed to import institute at row $rowIndex: " . $e->getMessage() . " at " . now() . "\n");
                     }
-
-                    $InstituteData = [
-                        'name' => $row[0],
-                        'country_id' => $country_id,
-                        'city' => $row[2],
-                        'address' => $row[3],
-                        'mobile' => $row[4],
-                        'whatsapp' => $row[5],
-                        'email' => $row[6],
-                        'admin' => $row[7],
-                        'adminmail' => $row[8],
-                        'interface' => $row[9],
-                        'interfacemail' => $row[10],
-                        'AboutInstitute' => $row[11],
-                        'description' => $row[12],
-                        'classInstituteType_s' => $row[13],
-                        'modelinstitute' => $row[14],
-                        'ActivityInstitute_s' => $row[15],
-                        'contacts' => $row[16],
-                        'religious_s' => $row[17],
-                        'religion2_s' => $row[18],
-                        'language_s' => $row[19],
-                        'AssessmentInstitute_s' => $row[20],
-                        'company' => $row[21],
-                        'support' => $row[22],
-                        'supportinterface' => $row[23],
-                        'timeinterface' => $row[24],
-                        'resultinterface' => $row[25],
-                        'user_id' => $user_id,
-                        'startTS' => $startTS,
-                        'endTS' => $endTS,
-                        'excel' => 1,
-                    ];
-
-                    if ($this->errorHandling == 'set' && $errors) {
-                        foreach ($errors as $field => $error) {
-                            unset($InstituteData[$field]);
-                        }
-                    }
-
-                    Institute::create($InstituteData);
-
-                    Log::info("Institute at row $rowIndex successfully imported.");
-                } catch (Exception $e) {
-                    Log::error("Failed to import institute at row $rowIndex: " . $e->getMessage());
-                    Storage::append('upload_log_institute.txt', "Failed to import institute at row $rowIndex: " . $e->getMessage() . " at " . now() . "\n");
                 }
-            }
-        });
-
-        Storage::append('upload_log_institute.txt', "File processed successfully at " . now() . "\n");
+            });
+        }
     }
 
     private function validateRow($row)
     {
         $errors = [];
 
-        if (!$row[0]) $errors['name'] = 'Invalid name';
-        if (!$row[1]) $errors['country'] = 'Invalid country';
-        if (!$row[2]) $errors['city'] = 'Invalid city';
-        if (!$row[3]) $errors['address'] = 'Invalid address';
-        if (!$row[4]) $errors['mobile'] = 'Invalid mobile';
-        if (!$row[5]) $errors['whatsapp'] = 'Invalid whatsapp';
-        if (!$row[6]) $errors['email'] = 'Invalid email';
-        if (!$row[7]) $errors['admin'] = 'Invalid admin';
-        if (!$row[8]) $errors['adminmail'] = 'Invalid adminmail';
-        if (!$row[9]) $errors['interface'] = 'Invalid interface';
-        if (!$row[10]) $errors['interfacemail'] = 'Invalid interfacemail';
-        if (!$row[11]) $errors['AboutInstitute'] = 'Invalid AboutInstitute';
-        if (!$row[12]) $errors['description'] = 'Invalid description';
-        if (!$row[13]) $errors['typeinstitute'] = 'Invalid typeinstitute';
-        if (!$row[14]) $errors['modelinstitute'] = 'Invalid modelinstitute';
-        if (!$row[15]) $errors['activity'] = 'Invalid activity';
-        if (!$row[16]) $errors['contacts'] = 'Invalid contacts';
-        if (!$row[17]) $errors['religion'] = 'Invalid religion';
-        if (!$row[18]) $errors['religion2'] = 'Invalid religion2';
-        if (!$row[19]) $errors['language'] = 'Invalid language';
-        if (!$row[20]) $errors['assessment'] = 'Invalid assessment';
-        if (!$row[21]) $errors['company'] = 'Invalid company';
-        if (!$row[22]) $errors['support'] = 'Invalid support';
-        if (!$row[23]) $errors['supportinterface'] = 'Invalid supportinterface';
-        if (!$row[24]) $errors['timeinterface'] = 'Invalid timeinterface';
-        if (!$row[25]) $errors['resultinterface'] = 'Invalid resultinterface';
-        if (!$this->user) if (!$row[26]) $errors['setBy'] = 'Invalid setBy';
-        if (!$row[27]) $errors['startTS'] = 'Invalid startTS';
-        if (!$row[28]) $errors['endTS'] = 'Invalid endTS';
+        if (!$row['nameinstitute']) $errors['nameinstitute'] = 'Invalid nameinstitute';
+        if (!$row['country']) $errors['country'] = 'Invalid country';
+        if (!$row['city']) $errors['city'] = 'Invalid city';
+        if (!$row['address']) $errors['address'] = 'Invalid address';
+        if (!$row['mobile']) $errors['mobile'] = 'Invalid mobile';
+        if (!$row['whatsapp']) $errors['whatsapp'] = 'Invalid whatsapp';
+        if (!$row['email']) $errors['email'] = 'Invalid email';
+        if (!$row['admin']) $errors['admin'] = 'Invalid admin';
+        if (!$row['adminmail']) $errors['adminmail'] = 'Invalid adminmail';
+        if (!$row['interface']) $errors['interface'] = 'Invalid interface';
+        if (!$row['interfacemail']) $errors['interfacemail'] = 'Invalid interfacemail';
+        if (!$row['aboutinstitute']) $errors['aboutinstitute'] = 'Invalid AboutInstitute';
+        if (!$row['description']) $errors['description'] = 'Invalid description';
+        if (!$row['typeinstitute']) $errors['typeinstitute'] = 'Invalid typeinstitute';
+        if (!$row['modelinstitute']) $errors['modelinstitute'] = 'Invalid modelinstitute';
+        if (!$row['activity']) $errors['activity'] = 'Invalid activity';
+        if (!$row['contacts']) $errors['contacts'] = 'Invalid contacts';
+        if (!$row['religion']) $errors['religion'] = 'Invalid religion';
+        if (!$row['religion2']) $errors['religion2'] = 'Invalid religion2';
+        if (!$row['language']) $errors['language'] = 'Invalid language';
+        if (!$row['assessment']) $errors['assessment'] = 'Invalid assessment';
+        if (!$row['company']) $errors['company'] = 'Invalid company';
+        if (!$row['support']) $errors['support'] = 'Invalid support';
+        if (!$row['supportinterface']) $errors['supportinterface'] = 'Invalid supportinterface';
+        if (!$row['timeinterface']) $errors['timeinterface'] = 'Invalid timeinterface';
+        if (!$row['resultinterface']) $errors['resultinterface'] = 'Invalid resultinterface';
+        if (!$this->user && !$row['setby']) $errors['setby'] = 'Invalid setBy';
+        if (!$row['startts']) {
+            $errors['startts'] = 'Invalid startTS';
+        } else {
+            try {
+                Jalalian::fromFormat('Y/n/j', $row['startts'])->getTimestamp();
+            } catch (Exception $e) {
+                $errors['startts'] = 'Invalid format startTS';
+            }
+        }
+        if (!$row['endts']) {
+            $errors['endts'] = 'Invalid endTS';
+        } else {
+            try {
+                Jalalian::fromFormat('Y/n/j', $row['endts'])->getTimestamp();
+            } catch (Exception $e) {
+                $errors['endts'] = 'Invalid format endTS';
+            }
+        }
+
         return $errors;
     }
 }

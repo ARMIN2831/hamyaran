@@ -42,9 +42,9 @@ class ConveneController extends Controller
     {
         if (auth()->user()->can('create convene')) {
             $request->validated();
-            Convene::create($request->all());
+            $convene = Convene::create($request->all());
 
-            return redirect()->route('convenes.index')->with('success','مجتمع با موفقیت ساخته شد.');
+            return redirect()->route('convenes.edit',$convene->id)->with('success','مجتمع با موفقیت ساخته شد.');
         }
         return redirect()->route('dashboard')->with('failed','شما به این بخش دسترسی ندارید!');
     }

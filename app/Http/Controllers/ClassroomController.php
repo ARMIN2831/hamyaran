@@ -72,8 +72,8 @@ class ClassroomController extends Controller
                 else $endTS = Jalalian::fromFormat('Y/n/j', $request->endTS)->getTimestamp();
                 $request->merge(['endTS' => $endTS]);
             }
-            Classroom::create($request->all());
-            return redirect()->route('classrooms.index')->with('success','کلاس‌ با موفقیت ساخته شد.');
+            $classroom = Classroom::create($request->all());
+            return redirect()->route('classrooms.edit',$classroom->id)->with('success','کلاس‌ با موفقیت ساخته شد.');
         }
         return redirect()->route('dashboard')->with('failed','شما به این بخش دسترسی ندارید!');
     }

@@ -8,12 +8,12 @@
                 <div class="content-header-left col-12 mb-2 mt-1">
                     <div class="row breadcrumbs-top">
                         <div class="col-12">
-                            <h5 class="content-header-title float-left pr-1 mb-0">دوره‌ها</h5>
+                            <h5 class="content-header-title float-left pr-1 mb-0">دانشجویان</h5>
                             <div class="breadcrumb-wrapper col-12">
                                 <ol class="breadcrumb p-0 mb-0">
-                                    <li class="breadcrumb-item"><a> مدیریت دوره‌ها </a>
+                                    <li class="breadcrumb-item"><a> مدیریت دانشجویان </a>
                                     </li>
-                                    <li class="breadcrumb-item active">ویرایش دوره
+                                    <li class="breadcrumb-item active">ویرایش دانشجو
                                     </li>
                                 </ol>
                                 @if(session('success'))
@@ -34,9 +34,9 @@
 
 
 
-                                <form method="get" action="{{ route('courses.index') }}" id="filterForm">
+                                <form method="get" action="{{ route('students.index') }}" id="filterForm">
                                     <div class="card-header">
-                                        <h4 class="card-title">لیست دوره ها</h4>
+                                        <h4 class="card-title">لیست دانشجویان</h4>
                                         <br>
                                     </div>
 
@@ -89,20 +89,29 @@
                                                 <thead>
                                                 <tr>
                                                     <th>#</th>
-                                                    <th>نام دوره</th>
-                                                    <th>مجتمع‌ها</th>
+                                                    <th>نام</th>
+                                                    <th>نام خانوادگی</th>
+                                                    <th>کشور</th>
+                                                    <th>زبان</th>
+                                                    <th>زمان ثبت نام</th>
+                                                    <th>پشتیبان</th>
                                                     <th>عملکرد</th>
                                                 </tr>
                                                 </thead>
                                                 <tbody>
-                                                @foreach($courses as $row)
+                                                @foreach($students as $row)
                                                     <tr>
                                                         <td>{{ $row->id }}</td>
-                                                        <td>{{ $row->name }}</td>
-                                                        <td>@foreach($row->convenes as $convene) <a href="{{ route('convenes.edit',$convene->id) }}">{{$convene->name}}</a> @endforeach</td>
+                                                        <td>{{ $row->firstName }}</td>
+                                                        <td>{{ $row->lastName }}</td>
+                                                        <td>{{ @$row->country->title }}</td>
+                                                        <td>{{ $row->language_s }}</td>
+                                                        <td>{{ \Morilog\Jalali\Jalalian::forge($row->startTS)->format('Y/m/d H:i:s') }}</td>
+                                                        <td>{{ @$row->user->name }}</td>
                                                         <td>
-                                                            <a href="{{ route('courses.edit',$row->id) }}" title="ویرایش" class="btn btn-small btn-primary"><i class="bx bx-edit"></i></a>
-                                                            <form method="post" action="{{ route('courses.destroy',$row->id) }}">
+                                                            <a href="{{ route('students.edit',$row->id) }}" title="ویرایش" class="btn btn-small btn-primary"><i
+                                                                    class="bx bx-edit"></i></a>
+                                                            <form method="post" action="{{ route('students.destroy',$row->id) }}">
                                                                 @csrf
                                                                 @method('DELETE')
                                                                 <button style="padding: 3px;margin-top: 2px;" type="submit" title="حذف" class="btn btn-small btn-danger"><i class="bx bx-x-circle"></i></button>
@@ -112,7 +121,7 @@
                                                 @endforeach
                                             </table>
                                         </div>
-                                        {{ $courses->appends(request()->query())->links('pagination::bootstrap-4') }}
+                                        {{ $students->appends(request()->query())->links('pagination::bootstrap-4') }}
                                     </div>
                                 </div>
                             </div>

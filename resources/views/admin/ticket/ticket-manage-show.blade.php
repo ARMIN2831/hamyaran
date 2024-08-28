@@ -15,12 +15,12 @@
                     <div class="chat-sidebar-toggle d-block d-lg-none mr-1"><i class="bx bx-menu font-large-1 cursor-pointer"></i>
                     </div>
                     <div class="avatar chat-profile-toggle m-0 mr-1">
-                        <img src="{{ $activeTicket->userOne1->image ? asset('user/image/'.$activeTicket->userOne1->image) : "img/profile.png"}}" alt="avatar" height="36" width="36" />
+                        <img src="{{ $activeTicket->userOne1->image ? asset('public/user/image/'.$activeTicket->userOne1->image) : "public/img/profile.png"}}" alt="avatar" height="36" width="36" />
                     </div>
                     <h6 class="mb-0">{{ $activeTicket->userOne1->name }}</h6>
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     <div class="avatar chat-profile-toggle m-0 mr-1">
-                        <img src="{{ $activeTicket->userTwo2->image ? asset('user/image/'.$activeTicket->userTwo2->image) : "img/profile.png"}}" alt="avatar" height="36" width="36" />
+                        <img src="{{ $activeTicket->userTwo2->image ? asset('public/user/image/'.$activeTicket->userTwo2->image) : "public/img/profile.png"}}" alt="avatar" height="36" width="36" />
                     </div>
                     <h6 class="mb-0">{{ $activeTicket->userTwo2->name }}</h6>
                 </div>
@@ -58,7 +58,7 @@
                                 <div class="chat {{ $chat->user->id == $user->id ? '':'chat-left' }}">
                                     <div class="chat-avatar">
                                         <a class="avatar m-0">
-                                            <img src="{{ $chat->user->image ? asset('user/image/'.$chat->user->image) : "img/profile.png"}}" alt="avatar" height="36" width="36" />
+                                            <img src="{{ $chat->user->image ? asset('public/user/image/'.$chat->user->image) : "public/img/profile.png"}}" alt="avatar" height="36" width="36" />
                                         </a>
                                     </div>
                                     <div class="chat-body">
@@ -103,7 +103,7 @@
                                 </span>
                 <div class="my-2">
                     <div class="avatar">
-                        <img src="{{ $activeTicket->userOne1->image ? asset('user/image/'.$activeTicket->userOne1->image) : "img/profile.png"}}" alt="chat avatar" height="100" width="100">
+                        <img src="{{ $activeTicket->userOne1->image ? asset('public/user/image/'.$activeTicket->userOne1->image) : "public/img/profile.png"}}" alt="chat avatar" height="100" width="100">
                     </div>
                     <h5 class="app-chat-user-name mb-0">{{ $activeTicket->userOne1->name }}</h5>
                     <span>آخرین ورود {{ \Morilog\Jalali\Jalalian::forge($activeTicket->userOne1->lastLoginTime)->format('Y/m/d H:i:s') }} </span>
@@ -111,7 +111,7 @@
                 </div>
                 <div class="my-2">
                     <div class="avatar">
-                        <img src="{{ $activeTicket->userTwo2->image ? asset('user/image/'.$activeTicket->userTwo2->image) : "img/profile.png"}}" alt="chat avatar" height="100" width="100">
+                        <img src="{{ $activeTicket->userTwo2->image ? asset('public/user/image/'.$activeTicket->userTwo2->image) : "public/img/profile.png"}}" alt="chat avatar" height="100" width="100">
                     </div>
                     <h5 class="app-chat-user-name mb-0">{{ $activeTicket->userTwo2->name }}</h5>
                     <span>آخرین ورود {{ \Morilog\Jalali\Jalalian::forge($activeTicket->userTwo2->lastLoginTime)->format('Y/m/d H:i:s') }} </span>

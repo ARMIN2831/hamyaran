@@ -1,5 +1,25 @@
 
 @include('layouts.header')
+<style>
+    @media (max-width: 767.98px) {
+        .pagination {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 0;
+            margin: 10px 0;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .table {
+            font-size: 0.875rem;
+        }
+    }
+</style>
 <body
     class="vertical-layout vertical-menu-modern boxicon-layout no-card-shadow content-left-sidebar chat-application navbar-sticky footer-static  "
     data-open="click" data-menu="vertical-menu-modern" data-col="content-left-sidebar">
@@ -43,9 +63,9 @@
                                      alt="پروفایل شما" height="40" width="40"></span>
                         </a>
                         <div class="dropdown-menu dropdown-menu-right pb-0">
-                            <a class="dropdown-item" href="{{ env('APP_URL') }}/profile">
+                            <a class="dropdown-item" href="{{ route('profile.edit') }}">
                                 <i class="bx bx-user mr-50"></i> ویرایش پروفایل </a>
-                            <a class="dropdown-item" href="{{ env('APP_URL') }}/ticket">
+                            <a class="dropdown-item" href="{{ route('tickets.index') }}">
                                 <i class="bx bx-envelope mr-50"></i> پیام‌های من</a>
                             <div class="dropdown-divider mb-0"></div>
                             <a class="dropdown-item" href="{{ route('logout') }}"><i
@@ -144,14 +164,10 @@
                         class="menu-title" data-i18n="Dashboard">گزارشات</span>
                 </a>
                 <ul class="menu-content">
-                    @if(auth()->user()->can('student report'))<li><a href="{{ route('report.student') }}"><i class="bx bx-right-arrow-alt"></i><span
-                                class="menu-item" data-i18n="eCommerce">نمودار دانشجویان</span></a></li>@endif
-                        @if(auth()->user()->can('worldMap report'))<li><a href="{{ route('report.worldMap') }}"><i class="bx bx-right-arrow-alt"></i><span
-                                class="menu-item" data-i18n="eCommerce">توزیع پراکندگی</span></a></li>@endif
-                        @if(auth()->user()->can('export report'))<li><a href="{{ route('report.export') }}"><i class="bx bx-right-arrow-alt"></i><span
-                                class="menu-item" data-i18n="eCommerce">گزارش‌گیری</span></a></li>@endif
-                        @if(auth()->user()->can('system report'))<li><a href="{{ route('report.system') }}"><i class="bx bx-right-arrow-alt"></i><span
-                                class="menu-item" data-i18n="eCommerce">گزارشات سامانه</span></a></li>@endif
+                   <li><a href="{{ route('report.student') }}"><i class="bx bx-right-arrow-alt"></i><span class="menu-item" data-i18n="eCommerce">نمودار دانشجویان</span></a></li>
+                        <li><a href="{{ route('report.worldMap') }}"><i class="bx bx-right-arrow-alt"></i><span class="menu-item" data-i18n="eCommerce">توزیع پراکندگی</span></a></li>
+                        <li><a href="{{ route('report.export') }}"><i class="bx bx-right-arrow-alt"></i><span class="menu-item" data-i18n="eCommerce">گزارش‌گیری</span></a></li>
+                        <li><a href="{{ route('report.system') }}"><i class="bx bx-right-arrow-alt"></i><span class="menu-item" data-i18n="eCommerce">گزارشات سامانه</span></a></li>
                 </ul>
             </li>
             <li class=" navigation-header"><span>دسترسی‌ها</span></li>

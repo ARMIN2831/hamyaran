@@ -72,6 +72,17 @@
                                             </fieldset>
                                         </div>
                                         @endif
+                                        <div class="col-md-6">
+                                            <fieldset class="form-group">
+                                                <label for="convene_id"> مجتمع </label>
+                                                <select style="width: 100%;margin-right: 0" name="convene_id" id="convene_id" class="select2 form-control">
+                                                    <option value="">انتخاب کنید</option>
+                                                    @foreach ($convenes as $convene)
+                                                        <option @if($convene->id == $user->convene_id) selected="selected" @endif value="{{ $convene->id }}">{{ $convene->name }}</option>
+                                                    @endforeach
+                                                </select>
+                                            </fieldset>
+                                        </div>
 
                                         <div class="card-header col-12 bg-primary my-2">
                                             <h4 class="card-title white">مشخصات اصلی:</h4>

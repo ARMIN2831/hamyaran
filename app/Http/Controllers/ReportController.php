@@ -22,7 +22,6 @@ class ReportController extends Controller
 {
     public function student(Request $request)
     {
-        if (!auth()->user()->can('student report')) return redirect()->route('dashboard')->with('failed','شما به این بخش دسترسی ندارید!');
         $countries = Country::get();
 
         $convenes = Convene::get();
@@ -265,7 +264,6 @@ class ReportController extends Controller
             $studentCount = $convene->users->flatMap->students->count();
             $conveneResult[$convene->name] = $studentCount;
         }
-
         $yearChart = [$this->jslist(array_keys($sumStudentYear)), $this->jslist($sumStudentYear), $this->jslist($addStudentYear), $this->jslist($delStudentYear)];
         $monthChart = [$this->jslist(array_keys($sumStudentMonth)), $this->jslist($sumStudentMonth), $this->jslist($addStudentMonth), $this->jslist($delStudentMonth)];
 
@@ -276,7 +274,6 @@ class ReportController extends Controller
             ->sortByDesc(fn($row) => $countriesID[$row->id])
             ->mapWithKeys(fn($row) => [$row->title => $countriesID[$row->id]])
             ->toArray();
-
         return [
             'year' => $yearChart,
             'month' => $monthChart,
@@ -306,7 +303,6 @@ class ReportController extends Controller
     {
 
         $user = auth()->user();
-        if (!$user->can('worldMap report')) return redirect()->route('dashboard')->with('failed','شما به این بخش دسترسی ندارید!');
         $students = Student::query();
         if ($user->can('some user')) {
             $convene = Convene::where('user_id',$user->id)->first();
@@ -334,7 +330,6 @@ class ReportController extends Controller
     public function export(Request $request)
     {
         $user = auth()->user();
-        if (!$user->can('export report')) return redirect()->route('dashboard')->with('failed','شما به این بخش دسترسی ندارید!');
 
         $countries = Country::get();
 
@@ -466,7 +461,6 @@ class ReportController extends Controller
     public function system()
     {
         $user = auth()->user();
-        if (!$user->can('system report')) return redirect()->route('dashboard')->with('failed','شما به این بخش دسترسی ندارید!');
         $students = Student::get()->count();
         $activities = Activity::get();
         $classrooms = Classroom::get();

@@ -46,7 +46,7 @@ class RoleController extends Controller
             if ($request->has('permissions')) {
                 $role->syncPermissions($request->permissions);
             }
-            return redirect()->route('roles.index')->with('success','نقش با موفقیت ساخته شد.');
+            return redirect()->route('roles.edit',$role->id)->with('success','نقش با موفقیت ساخته شد.');
         }
         return redirect()->route('dashboard')->with('failed','شما به این بخش دسترسی ندارید!');
     }

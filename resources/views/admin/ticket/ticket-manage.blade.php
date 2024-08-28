@@ -13,7 +13,7 @@
                             </span>
                         <div class="my-2">
                             <div class="avatar">
-                                <img src="{{ $user->image ? asset('user/image/'.$user->image) : "img/profile.png"}}" alt="user_avatar" height="100" width="100">
+                                <img src="{{ $user->image ? asset('public/user/image/'.$user->image) : "public/img/profile.png"}}" alt="user_avatar" height="100" width="100">
                             </div>
                             <h5 class="mb-0">{{ $user->name }}</h5>
                             <span>{{ @$user->roles[0]->name }}</span>
@@ -40,7 +40,7 @@
                         <div class="d-flex align-items-center">
                             <div class="chat-sidebar-profile-toggle">
                                 <div class="avatar">
-                                    <img src="{{ $user->image ? asset('user/image/'.$user->image) : "img/profile.png"}}" alt="user_avatar" height="36" width="36">
+                                    <img src="{{ $user->image ? asset('public/user/image/'.$user->image) : "public/img/profile.png"}}" alt="user_avatar" height="36" width="36">
                                 </div>
                             </div>
                             <fieldset class="form-group position-relative has-icon-left mx-75 mb-0">
@@ -59,8 +59,8 @@
                                     <li>
                                         <div class="d-flex align-items-center">
                                             <div class="avatar m-0 mr-50">
-                                                <img src="{{ $ticket->userOne1->image ? asset('user/image/'.$ticket->userOne1->image) : "img/profile.png"}}" height="36" width="36" alt="sidebar user image">
-                                                <img src="{{ $ticket->userTwo2->image ? asset('user/image/'.$ticket->userTwo2->image) : "img/profile.png"}}" height="36" width="36" alt="sidebar user image">
+                                                <img src="{{ $ticket->userOne1->image ? asset('public/user/image/'.$ticket->userOne1->image) : "public/img/profile.png"}}" height="36" width="36" alt="sidebar user image">
+                                                <img src="{{ $ticket->userTwo2->image ? asset('public/user/image/'.$ticket->userTwo2->image) : "public/img/profile.png"}}" height="36" width="36" alt="sidebar user image">
                                                 <span class="avatar-status-'.($tkt->active?'online':'offline').'"></span>
                                             </div>
                                             <div class="chat-sidebar-name">

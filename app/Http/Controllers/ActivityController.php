@@ -19,7 +19,17 @@ class ActivityController extends Controller
     public function index(Request $request)
     {
         if (auth()->user()->can('view activity')) {
-            $filter = $this->doFilter(Activity::query(), $request, ['id', 'title'],['student_id']);
+            $a = Activity::query();
+            if ($request->search){
+                $name = $request->search;
+                $a->WhereHas('student',function ($query) use ($name) {
+                    $query->where(
+                        DB::raw("CONCAT(firstName,' ',lastName)"), 'LIKE', "%{$name}%"
+                    );
+                });
+            }
+
+            $filter = $this->doFilter($a, $request, ['id', 'title'],['student_id']);
             $activities = $filter[0];
             return view('admin.activity.index', compact('activities'));
         }
@@ -59,7 +69,7 @@ class ActivityController extends Controller
             $activity = Activity::create($request->all());
             if ($image) $activity->image = $image;
             $activity->save();
-            return redirect()->route('activities.index')->with('success','فعالیت با موفقیت ساخته شد.');
+            return redirect()->route('activities.edit',$activity)->with('success','فعالیت با موفقیت ساخته شد.');
         }
         return redirect()->route('dashboard')->with('failed','شما به این بخش دسترسی ندارید!');
     }

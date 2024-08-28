@@ -17,6 +17,6 @@ class checkLogin
     public function handle(Request $request, Closure $next): Response
     {
         if (Auth::user()) return $next($request);
-        else return redirect()->route('loginIndex')->with('failed','لطفا اول لاگین کنید');
+        else return redirect()->route('loginIndex');
     }
 }

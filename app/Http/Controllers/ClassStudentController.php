@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Facades\Excel;
 use Morilog\Jalali\Jalalian;
 
-class classStudentController extends Controller
+class ClassStudentController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -65,7 +65,7 @@ class classStudentController extends Controller
     {
         if (auth()->user()->can('edit classroom')) {
             try {
-                $classroom->student()->updateExistingPivot($student->id, ['score' => (string) $request->score]);
+                $classroom->student()->updateExistingPivot($student->id, ['score' => (string) $request->score,'price' => (string) $request->price]);
             } catch (\Exception $e) {
 
             }

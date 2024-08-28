@@ -5,8 +5,6 @@ namespace App\Jobs;
 use App\Models\Student;
 use Exception;
 use Illuminate\Bus\Queueable;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -23,6 +21,9 @@ class ImportStudentsJob implements ShouldQueue
     protected $filePath;
     protected $errorHandling;
     protected $user;
+
+    public $timeout = 3600;
+    public $tries = 5;
 
     public function __construct($filePath, $errorHandling, $user)
     {

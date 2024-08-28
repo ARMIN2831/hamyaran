@@ -116,8 +116,8 @@
 
 
 
---}}
 <script src="{{ asset('public/vendors/js/tables/datatable/datatables.min.js?v1.2.8') }}"></script>
+--}}
 <script src="{{ asset('public/vendors/js/tables/datatable/dataTables.bootstrap4.min.js?v1.2.8') }}"></script>
 <script src="{{ asset('public/vendors/js/tables/datatable/dataTables.buttons.min.js?v1.2.8') }}"></script>
 <script src="{{ asset('public/vendors/js/tables/datatable/buttons.html5.min.js?v1.2.8') }}"></script>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>{{ config('app.name', 'Laravel') }}</title>
+    <title>{{ config('app.name') }} @if(isset($pageTitle)) - {{ $pageTitle }} @endif</title>
     <link rel="shortcut icon" href="{{ asset('public/img/favicon.ico') }}" type="image/x-icon">
     <meta name="title" content="{{ config('app.name', 'Laravel') }}">
 
@@ -55,3 +55,4 @@
             type="text/javascript"></script>
 
 </head>
+admin@a.com

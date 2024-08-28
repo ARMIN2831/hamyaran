@@ -15,7 +15,7 @@ abstract class Controller
         } else {
             if ($request->search) {
                 $search = $request->input('search');
-                $data->where(function ($q) use ($arr, $search) {
+                $data->orWhere(function ($q) use ($arr, $search) {
                     foreach ($arr as $column) {
                         $q->orWhere($column, 'LIKE', "%{$search}%");
                     }
@@ -25,8 +25,6 @@ abstract class Controller
                 foreach ($params as $param)
                     if ($request->$param || $request->$param != '')
                         $data->where($param,$request->$param);
-
-
             //$data = $data->latest();
 
             if (!$request->pagesize) $request->pagesize = 10;

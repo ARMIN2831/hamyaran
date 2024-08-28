@@ -37,10 +37,10 @@
 
                                 <div class="card-header">
                                     <h4 class="card-title">لیست فعالیت‌ها</h4>
-                                    <div class="col-md-12">
+                                    <div class="col-md-12 col-md-6">
                                         <fieldset class="form-group">
                                             <label for="student_id"> دانشجو: </label>
-                                            <select style="width: 300px;" dir="rtl" name="student_id" id="student_id" class="select2 form-control activity-select activity-select-2">
+                                            <select style="width: 50%;" dir="rtl" name="student_id" id="student_id" class="select2 form-control activity-select activity-select-2">
                                                 <option value="">همه‌ی دانشجویان</option>
                                             </select>
                                         </fieldset>

@@ -57,7 +57,7 @@
                                             <input type="file" name="image" id="image" value="{{ @$user->image }}" class="form-control">
                                             <input type="hidden" name="image"value="{{ @$user->image }}">
                                             <p>از عکس مربعی ترجیحاً 100x100 پیکسل استفاده نمایید.</p>
-                                            @if($user->image)<img src="{{ asset('user/image/'.$user->image) }}" width="100" />@endif
+                                            @if($user->image)<img src="{{ asset('publicuser/image/'.$user->image) }}" width="100" />@endif
 
                                         </fieldset>
                                     </div>

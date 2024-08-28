@@ -68,8 +68,8 @@ class InstituteController extends Controller
             }
             if ($request->mobile) $request->merge(['mobile'=>$request->c_mobile.' '.$request->mobile]);
             if ($request->whatsapp) $request->merge(['mobile'=>$request->c_whatsapp.' '.$request->whatsapp]);
-            Institute::create($request->all());
-            return redirect()->route('institutes.index')->with('success','موسسه با موفقیت ساخته شد.');
+            $institute = Institute::create($request->all());
+            return redirect()->route('institutes.edit',$institute->id)->with('success','موسسه با موفقیت ساخته شد.');
         }
         return redirect()->route('dashboard')->with('failed','شما به این بخش دسترسی ندارید!');
     }

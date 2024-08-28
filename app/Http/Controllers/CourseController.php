@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\Course\CourseStoreRequest;
-use App\Http\Requests\Course\CourseUpdateRequest;
+use App\Http\Requests\course\CourseStoreRequest;
+use App\Http\Requests\course\CourseUpdateRequest;
 use App\Models\Convene;
 use App\Models\Course;
 use App\Models\User;
@@ -46,7 +46,7 @@ class CourseController extends Controller
 
             $course = Course::create($request->all());
             if ($request->convene) $course->convenes()->sync($request->convene);
-            return redirect()->route('courses.index')->with('success','دوره با موفقیت ساخته شد.');
+            return redirect()->route('courses.edit',$course->id)->with('success','دوره با موفقیت ساخته شد.');
         }
         return redirect()->route('dashboard')->with('failed','شما به این بخش دسترسی ندارید!');
     }

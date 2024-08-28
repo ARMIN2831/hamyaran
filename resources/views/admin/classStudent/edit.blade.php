@@ -39,7 +39,7 @@
                                                 <th>نام خانوادگی</th>
                                                 <th>شناسه</th>
                                                 <th>زمان اضافه شدن</th>
-                                                <th>نمره</th>
+                                                <th>نمره و مبلغ</th>
                                                 <th>عملکرد</th>
                                             </tr>
                                             </thead>
@@ -67,6 +67,12 @@
                                                                         <option @if($row->pivot->score == 'متوسط') selected="selected" @endif value="متوسط">متوسط</option>
                                                                         <option @if($row->pivot->score == 'ضعیف') selected="selected" @endif value="ضعیف">ضعیف</option>
                                                                     </select>
+                                                                </fieldset>
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <fieldset class="form-group">
+                                                                    <label for="price"> مبلغ </label>
+                                                                    <input type="text" name="price" id="price" value="{{ $row->pivot->price }}" class="form-control">
                                                                 </fieldset>
                                                             </div>
                                                         </form>

@@ -140,14 +140,8 @@
                                         </div>
                                         <div class="col-md-6">
                                             <fieldset class="form-group">
-                                                <label for="price"> مبلغ </label>
-                                                <input type="text" name="price" id="price" value="{{ $classroom->price }}" class="form-control">
-                                            </fieldset>
-                                        </div>
-                                        <div class="col-md-6">
-                                            <fieldset class="form-group">
                                                 <label for="commission"> کمیسیون </label>
-                                                <input type="text" name="commission" id="commission" value="{{ $classroom->commission }}" class="form-control">
+                                                <input type="number" name="commission" id="commission" value="{{ $classroom->commission }}" class="form-control">
                                             </fieldset>
                                         </div>
                                         <div class="col-md-6">

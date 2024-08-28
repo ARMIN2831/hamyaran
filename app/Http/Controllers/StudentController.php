@@ -65,8 +65,8 @@ class StudentController extends Controller
                 $request->merge(['endTS' => $endTS]);
             }
             if ($request->mobile) $request->merge(['mobile'=>$request->c_mobile.'-'.$request->mobile]);
-            Student::create($request->all());
-            return redirect()->route('students.index')->with('success','دانشجو با موفقیت ساخته شد.');
+            $student = Student::create($request->all());
+            return redirect()->route('students.edit',$student->id)->with('success','دانشجو با موفقیت ساخته شد.');
         }
         return redirect()->route('dashboard')->with('failed','شما به این بخش دسترسی ندارید!');
     }
@@ -143,7 +143,7 @@ class StudentController extends Controller
     public function uploadExcel(Request $request)
     {
         $request->validate([
-            'file' => 'required|mimes:xlsx|max:1024',
+            'file' => 'required|mimes:xlsx',
             'error' => 'required|string',
         ]);
         $filePath = $request->file('file')->storeAs('uploads', 'students.xlsx');

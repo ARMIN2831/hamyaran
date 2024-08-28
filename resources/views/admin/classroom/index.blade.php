@@ -105,8 +105,8 @@
                                                     <tr>
                                                         <td>{{ $row->id }}</td>
                                                         <td>{{ $row->name }}</td>
-                                                        <td>@if($row->course_id) <a href="{{ route('courses.edit',$row->course_id) }}">{{$row->course->name}}</a><br> @endif</td>
-                                                        <td>@if($row->convene_id) <a href="{{ route('convenes.edit',$row->convene_id) }}">{{$row->convene->name}}</a><br> @endif</td>
+                                                        <td>@if($row->course_id) <a href="{{ route('courses.edit',$row->course_id) }}">{{@$row->course->name}}</a><br> @endif</td>
+                                                        <td>@if($row->convene_id) <a href="{{ route('convenes.edit',$row->convene_id) }}">{{@$row->convene->name}}</a><br> @endif</td>
                                                         <td>{{ @$row->country->title }}</td>
                                                         <td>{{ @$row->country->title }}</td>
                                                         <td>{{ count($row->student) }}</td>

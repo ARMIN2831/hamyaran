@@ -23,7 +23,7 @@
                     <div class="chat-sidebar-toggle d-block d-lg-none mr-1"><i class="bx bx-menu font-large-1 cursor-pointer"></i>
                     </div>
                     <div class="avatar chat-profile-toggle m-0 mr-1">
-                        <img src="{{ $otherUser->image ? asset('user/image/'.$otherUser->image) : "img/profile.png"}}" alt="avatar" height="36" width="36" />
+                        <img src="{{ $otherUser->image ? asset('public/user/image/'.$otherUser->image) : "public/img/profile.png"}}" alt="avatar" height="36" width="36" />
                     </div>
                     <h6 class="mb-0">{{ $otherUser->name }}</h6>
                 </div>
@@ -62,7 +62,7 @@
                                 <div class="chat {{ $chat->user->id == $user->id ? '':'chat-left' }}">
                                     <div class="chat-avatar">
                                         <a class="avatar m-0">
-                                            <img src="{{ $chat->user->image ? asset('user/image/'.$chat->user->image) : "img/profile.png"}}" alt="avatar" height="36" width="36" />
+                                            <img src="{{ $chat->user->image ? asset('public/user/image/'.$chat->user->image) : "public/img/profile.png"}}" alt="avatar" height="36" width="36" />
                                         </a>
                                     </div>
                                     <div class="chat-body">
