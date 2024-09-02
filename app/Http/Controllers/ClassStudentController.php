@@ -64,11 +64,11 @@ class ClassStudentController extends Controller
     public function update(Request $request, Classroom $classroom, Student $student)
     {
         if (auth()->user()->can('edit classroom')) {
-            try {
-                $classroom->student()->updateExistingPivot($student->id, ['score' => (string) $request->score,'price' => (string) $request->price]);
-            } catch (\Exception $e) {
+            DB::table('classroom_student')->where('student_id',$student->id)->where('classroom_id',$classroom->id)->update([
+                'price' => (string) $request->price,
+                'score' => (string) $request->score,
+            ]);
 
-            }
             return redirect()->route('classStudents.edit',$classroom->id)->with('success','دانشجوی کلاس‌ با موفقیت حذف شد.');
         }
         return redirect()->route('dashboard')->with('failed','شما به این بخش دسترسی ندارید!');

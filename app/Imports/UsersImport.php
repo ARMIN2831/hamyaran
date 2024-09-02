@@ -2,41 +2,41 @@
 
 namespace App\Imports;
 
+use App\Jobs\ImportStudentsJob;
 use App\Models\Student;
-use App\Models\Country;
-use App\Models\User;
 use Exception;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Maatwebsite\Excel\Concerns\OnEachRow;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithBatchInserts;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
+use Maatwebsite\Excel\Concerns\WithLimit;
+use Maatwebsite\Excel\Concerns\WithStartRow;
+use Maatwebsite\Excel\Row;
 use Morilog\Jalali\Jalalian;
 
-class StudentsImport implements ShouldQueue,ToModel, WithHeadingRow, WithBatchInserts, WithChunkReading
+class StudentsImport implements ShouldQueue,OnEachRow, WithHeadingRow, WithBatchInserts, WithChunkReading
 {
     private $errorHandling;
     private $user;
-    private $countries;
-    private $users;
-    //private $existingMobiles;
+    private $startRow;
 
     public function __construct($errorHandling, $user)
     {
         $this->errorHandling = $errorHandling;
         $this->user = $user;
-        $this->countries = Country::pluck('id', 'ISO2')->toArray();
-        $this->users = $this->user ? User::pluck('id', 'username')->toArray() : [];
-        //$this->existingMobiles = Student::pluck('mobile')->toArray();
     }
-
-    public function model(array $row)
+    public function onRow(Row $row)
     {
+        $lineNumber = $row->getIndex();;
         set_time_limit(60000);
         ignore_user_abort(true);
-        ini_set('max_execution_time', '60000');
+        ini_set('max_execution_time', '6000');
         ini_set('memory_limit', '2048M');
         static $lineNumber = 1;
         try {
@@ -83,17 +83,19 @@ class StudentsImport implements ShouldQueue,ToModel, WithHeadingRow, WithBatchIn
             $now = Jalalian::now()->format('Y/m/d H:i:s');
 
             if ($this->errorHandling == 'notSetAll' && $errors) {
-                //Log::error("Errors found in row: " . implode(', ', $errors));
+                Log::error("Errors found in row: " . implode(', ', $errors));
                 Storage::append('upload_log.txt', "Errors found in row " . $lineNumber . " Import aborted at " . $now . " (errors :" . implode(', ', $errors) . ")\n");
                 $lineNumber++;
                 return null;
             }
+
             if ($this->errorHandling == 'notSetStu' && $errors) {
-                //Log::warning("Skipping student in row: ".$lineNumber." due to errors: " . implode(', ', $errors));
+                Log::warning("Skipping student in row: ".$lineNumber." due to errors: " . implode(', ', $errors));
                 Storage::append('upload_log.txt', "Errors found in row " . $lineNumber . " Import aborted at " . $now . " (errors :" . implode(', ', $errors) . ")\n");
                 $lineNumber++;
                 return null;
             }
+
             if ($row['mobile'] && Student::where('mobile', $row['mobile'])->exists()) {
                 Log::warning("Skipping student due to duplicate mobile number in row: ".$lineNumber);
                 Storage::append('upload_log.txt', "Skipping student due to duplicate mobile number in row: " . $lineNumber . " Import aborted at " . $now . "\n");
@@ -101,8 +103,8 @@ class StudentsImport implements ShouldQueue,ToModel, WithHeadingRow, WithBatchIn
                 return null;
             }
 
-            $country_id = $this->countries[$row['country']] ?? null;
-            $nationality_id = $this->countries[$row['nationality']] ?? null;
+            $country_id = null;
+            $nationality_id = null;
 
             $user_id = '';
             $startTS = '';
@@ -113,7 +115,7 @@ class StudentsImport implements ShouldQueue,ToModel, WithHeadingRow, WithBatchIn
                 }
             } else {
                 if ($row['setby']) {
-                    $user_id = $this->users[$row['setby']] ?? null;
+                    $user_id = null;
                 }
                 if (!isset($errors['startts'])) {
                     $startTS = Jalalian::fromFormat('Y/n/j', $row['startts'])->getTimestamp();
@@ -157,8 +159,8 @@ class StudentsImport implements ShouldQueue,ToModel, WithHeadingRow, WithBatchIn
                     unset($studentData[$field]);
                 }
             }
-            //Log::info("Student successfully imported in row: " . $lineNumber);
-            //Storage::append('upload_log.txt', "----Student in row: " . $lineNumber . " successfully imported at " . $now . "\n");
+            Log::info("Student successfully imported in row: " . $lineNumber);
+            Storage::append('upload_log.txt', "----Student in row: " . $lineNumber . " successfully imported at " . $now . "\n");
             $lineNumber++;
             return new Student($studentData);
 
@@ -177,4 +179,6 @@ class StudentsImport implements ShouldQueue,ToModel, WithHeadingRow, WithBatchIn
     {
         return 1000;
     }
+
+
 }

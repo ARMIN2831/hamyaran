@@ -57,4 +57,8 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Convene::class,'convene_id','id');
     }
+    public function classrooms()
+    {
+        return $this->hasMany(Classroom::class);
+    }
 }

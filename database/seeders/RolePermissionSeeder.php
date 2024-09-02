@@ -79,6 +79,7 @@ class RolePermissionSeeder extends Seeder
             //'worldMap report' => 'گزارش توزیع پراکندگی',
             //'export report' => 'گزارش گیری',
             //'system report' => 'گزارش سامانه',
+            'finance report' => 'گزارش مالی',
 
             //'export class' => 'خروجی اکسل دانشجویان کلاس'
         ];

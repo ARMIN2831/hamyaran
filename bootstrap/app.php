@@ -7,7 +7,7 @@ use Illuminate\Foundation\Configuration\Middleware;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withSchedule(function (Schedule $schedule) {
-        $schedule->command('queue:work')->everyMinute()->withoutOverlapping();
+        $schedule->command('php artisan queue:work --timeout=6000')->everyMinute()->withoutOverlapping();
     })
     ->withRouting(
         web: __DIR__.'/../routes/web.php',

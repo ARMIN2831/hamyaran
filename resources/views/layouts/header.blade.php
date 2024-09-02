@@ -55,4 +55,3 @@
             type="text/javascript"></script>
 
 </head>
-admin@a.com

@@ -163,25 +163,22 @@ class ApplicationController extends Controller
     public function studentStore(Request $request, User $user)
     {
         $classroom = Classroom::where('id',$request->classroom_id)->first();
-        $student = Student::where('mobile',$request->mobile)->first();
-        if ($student && $request->mobile != null){
+        $student = Student::where('mobile',$request->mobile)->whereNotNull('mobile')->first();
+        if ($student){
             $student->update([
                 'firstName' => $request->firstName,
                 'lastName' => $request->lastName,
+                'fatherName' => $request->fatherName,
                 'birthDate' => $request->birthDate,
                 'commissionAttraction' => $request->commissionAttraction,
             ]);
-            try {
-                $row = DB::table('classroom_student')->where('student_id',$student->id)->where('classroom_id',$classroom->id)->first();
-                $classroom->student()->detach($student->id);
-                $classroom->student()->attach($student->id, [
-                    'price' => (string) $request->price,
-                    'score' => (string) $row->score,
-                    'ts' => (string) $row->ts,
-                ]);
-            } catch (\Exception $e) {
-
-            }
+            $row = DB::table('classroom_student')->where('student_id',$student->id)->where('classroom_id',$classroom->id)->first();
+            $classroom->student()->detach($student->id);
+            $classroom->student()->attach($student->id, [
+                'price' => (string) $request->price,
+                'score' => (string) $row->score,
+                'ts' => (string) $row->ts,
+            ]);
         }else{
             $student = Student::create([
                 'firstName' => $request->firstName,
@@ -189,6 +186,7 @@ class ApplicationController extends Controller
                 'birthDate' => $request->birthDate,
                 'mobile' => $request->mobile,
                 'user_id' => $user->id,
+                'fatherName' => $request->fatherName,
                 'commissionAttraction' => $request->commissionAttraction,
             ]);
             $classroom->student()->attach($student->id, ['ts' => time(),'price' => (string) $request->price]);
@@ -227,16 +225,16 @@ class ApplicationController extends Controller
     }
     public function changeProfile(Request $request, User $user)
     {
-        $image = null;
+        $image = '';
         if ($request->image){
             $image = $this->uploadFile($request,'image',$user,'user/image');
+            $user->image = $image;
         }
-        $user->update([
-            'name' => $request->name,
-            'image' => $image,
-        ]);
+        if ($request->name) $user->name = $request->name;
+        $user->save();
         return response()->json([
             'status' => 'success',
+            'data' => $image,
         ]);
     }
     public function languageList()
@@ -250,7 +248,7 @@ class ApplicationController extends Controller
     public function getClassroom(Request $request)
     {
         $classroom = Classroom::where('id',$request->classroom_id)->first();
-        if ($classroom->startTS) $classroom->startTS = @Jalalian::forge($classroom->endTS)->format('Y/m/d H:i:s');
+        if ($classroom->startTS) $classroom->startTS = @Jalalian::forge($classroom->startTS)->format('Y/m/d H:i:s');
         if ($classroom->endTS) $classroom->endTS = @Jalalian::forge($classroom->endTS)->format('Y/m/d H:i:s');
         return response()->json([
             'status' => 'success',
@@ -271,7 +269,7 @@ class ApplicationController extends Controller
         }
         unset($student->classroom);
 
-        if ($student->startTS) $student->startTS = @Jalalian::forge($student->endTS)->format('Y/m/d H:i:s');
+        if ($student->startTS) $student->startTS = @Jalalian::forge($student->startTS)->format('Y/m/d H:i:s');
         if ($student->endTS) $student->endTS = @Jalalian::forge($student->endTS)->format('Y/m/d H:i:s');
 
         return response()->json([

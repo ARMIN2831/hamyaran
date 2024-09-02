@@ -168,6 +168,7 @@
                         <li><a href="{{ route('report.worldMap') }}"><i class="bx bx-right-arrow-alt"></i><span class="menu-item" data-i18n="eCommerce">توزیع پراکندگی</span></a></li>
                         <li><a href="{{ route('report.export') }}"><i class="bx bx-right-arrow-alt"></i><span class="menu-item" data-i18n="eCommerce">گزارش‌گیری</span></a></li>
                         <li><a href="{{ route('report.system') }}"><i class="bx bx-right-arrow-alt"></i><span class="menu-item" data-i18n="eCommerce">گزارشات سامانه</span></a></li>
+                        @if(auth()->user()->can('finance report'))<li><a href="{{ route('report.finance') }}"><i class="bx bx-right-arrow-alt"></i><span class="menu-item" data-i18n="eCommerce">گزارش مالی</span></a></li>@endif
                 </ul>
             </li>
             <li class=" navigation-header"><span>دسترسی‌ها</span></li>

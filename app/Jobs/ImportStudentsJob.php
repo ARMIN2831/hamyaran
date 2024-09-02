@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Models\Student;
+use App\Imports\StudentsImport;
 use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Support\Facades\Log;
@@ -12,7 +12,6 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Maatwebsite\Excel\Facades\Excel;
-use App\Imports\StudentsImport;
 
 class ImportStudentsJob implements ShouldQueue
 {
@@ -21,9 +20,6 @@ class ImportStudentsJob implements ShouldQueue
     protected $filePath;
     protected $errorHandling;
     protected $user;
-
-    public $timeout = 3600;
-    public $tries = 5;
 
     public function __construct($filePath, $errorHandling, $user)
     {
@@ -34,11 +30,11 @@ class ImportStudentsJob implements ShouldQueue
 
     public function handle()
     {
-        Log::info('Starting the import process.');
+        //Log::info('Starting the import process.');
         try {
             Excel::import(new StudentsImport($this->errorHandling, $this->user), $this->filePath);
             Storage::append('upload_log.txt', "File processed successfully at " . now() . "\n");
-            Log::info('Import process completed successfully.');
+            //Log::info('Import process completed successfully.');
         } catch (Exception $e) {
             Log::error('An error occurred during the import process: ' . $e->getMessage());
             Storage::append('upload_log.txt', "File processing failed at " . now() . " with error: " . $e->getMessage() . "\n");

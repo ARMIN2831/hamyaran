@@ -539,4 +539,62 @@ class ReportController extends Controller
         ];
         return view('admin.report.report', compact('students', 'activities' ,'classrooms', 'tickets', 'convenes', 'users', 'chartData'));
     }
+    public function finance(Request $request)
+    {
+        if ($request->startTS and $request->endTS){
+            $startTS = '1400/00/00';
+            $endTS = '1404/00/00';
+            if ($request->startTS){
+                if (strpos($request->startTS, ':') !== false) $startTS = Jalalian::fromFormat('Y/n/j H:i:s', $request->startTS)->getTimestamp();
+                else $startTS = Jalalian::fromFormat('Y/n/j', $request->startTS)->getTimestamp();
+            }
+            if ($request->endTS){
+                if (strpos($request->endTS, ':') !== false) $endTS = Jalalian::fromFormat('Y/n/j H:i:s', $request->endTS)->getTimestamp();
+                else $endTS = Jalalian::fromFormat('Y/n/j', $request->endTS)->getTimestamp();
+            }
+            $users = User::with(['classrooms.student' => function ($query) use ($startTS, $endTS) {
+                $query->wherePivot('ts', '>=', $startTS)
+                    ->wherePivot('ts', '<=', $endTS);
+            }])->get();
+        }else{
+            $users = User::with(['classrooms.student'])->get();
+        }
+
+        $totalUserPrice = [];
+        $totalUserCommission = [];
+        $errors = [];
+        foreach ($users as $user){
+            $price = 0;
+            $commissionPrice = 0;
+            foreach ($user->classrooms as $classroom){
+                if(!$classroom->commission) continue;
+                foreach ($classroom->student as $student){
+                    if (!$student->pivot->price) continue;
+                    try {
+                        if ($student->commissionAttraction == 1){
+                            $commissionPrice += $student->pivot->price;
+                        }else{
+                            $commission = ($classroom->commission * $student->pivot->price) / 100;
+                            $commissionPrice += $commission;
+                            $price += $student->pivot->price - $commission;
+                        }
+                    }catch (Exception $e){
+                        $errors [$user->name] = 'error to calculate student id:('. $student->id .') in classroom id:('. $classroom->id .')';
+                    }
+                }
+            }
+            $totalUserPrice [$user->name] = $commissionPrice;
+            $totalUserCommission [$user->name] = $commissionPrice;
+        }
+        $totalUserCommissionPercent = [];
+        $sum = array_sum($totalUserCommission);
+        foreach ($totalUserCommission as $key => $row){
+            if ($sum == 0) $totalUserCommissionPercent [$key."(0%)"] = $row;
+            else $totalUserCommissionPercent [$key."(".round(($row/$sum)*100)."%)"] = $row;
+        }
+        $chartData = [
+            'commission' => ['data' => $this->jslist($totalUserCommission), 'commissionPercent' => $this->jslist(array_keys($totalUserCommissionPercent))],
+        ];
+        return view('admin.report.finance', compact('chartData','totalUserPrice', 'totalUserCommission'));
+    }
 }

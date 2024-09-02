@@ -80,7 +80,6 @@ class UserController extends Controller
      */
     public function update(UserUpdateRequest $request, User $user)
     {
-        dd($request);
         if (auth()->user()->can('edit user')) {
             $request->validated();
             $input = $request->all();

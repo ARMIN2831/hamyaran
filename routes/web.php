@@ -107,6 +107,7 @@ Route::prefix('dashboard')->middleware('checkLogin')->group(function () {
         Route::get('worldMap', [ReportController::class, 'worldMap'])->name('report.worldMap');
         Route::get('export', [ReportController::class, 'export'])->name('report.export');
         Route::get('system', [ReportController::class, 'system'])->name('report.system');
+        Route::get('finance', [ReportController::class, 'finance'])->name('report.finance');
 
     });
     Route::get('/students/upload', [StudentController::class, 'showUploadForm'])->name('students.upload');
