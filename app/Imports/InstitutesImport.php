@@ -6,165 +6,204 @@ use App\Models\Country;
 use App\Models\Institute;
 use App\Models\User;
 use Exception;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
-use Maatwebsite\Excel\Concerns\ToCollection;
+use Maatwebsite\Excel\Concerns\ToModel;
+use Maatwebsite\Excel\Concerns\WithBatchInserts;
+use Maatwebsite\Excel\Concerns\WithChunkReading;
+use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
+use Maatwebsite\Excel\Events\AfterImport;
+use Maatwebsite\Excel\Events\BeforeImport;
 use Morilog\Jalali\Jalalian;
 
-class InstitutesImport implements ToCollection, WithHeadingRow
+class InstitutesImport implements ShouldQueue,ToModel, WithHeadingRow, WithBatchInserts, WithChunkReading, WithEvents
 {
     private $errorHandling;
     private $user;
-    private $batchSize = 1000; // حجم دسته‌ها
+    private $countries;
+    private $users;
+    private $successCount;
+    private $lineNumber;
 
     public function __construct($errorHandling, $user)
     {
         $this->errorHandling = $errorHandling;
         $this->user = $user;
+        $this->countries = Country::pluck('id', 'ISO2')->toArray();
+        $this->users = $this->user ? User::pluck('id', 'username')->toArray() : [];
+        $this->successCount = 0;
+        $this->lineNumber = 0;
     }
 
-    public function collection(Collection $rows)
+    public function model(array $row)
     {
-        $chunks = $rows->chunk($this->batchSize);
+        set_time_limit(60000);
+        ignore_user_abort(true);
+        ini_set('max_execution_time', '60000');
+        ini_set('memory_limit', '2048M');
+        try {
+            $errors = [];
 
-        foreach ($chunks as $chunk) {
-            DB::transaction(function () use ($chunk) {
-                $countries = Country::pluck('id', 'ISO2')->toArray();
-                $users = $this->user ? User::pluck('id', 'username')->toArray() : [];
-
-                foreach ($chunk as $rowIndex => $row) {
-                    try {
-                        $errors = $this->validateRow($row);
-
-                        if ($this->errorHandling == 'notSetAll' && $errors) {
-                            Log::error("Errors found at row $rowIndex, skipping entire import. errors: " . implode(', ', $errors));
-                            Storage::append('upload_log_institute.txt', "Errors found at row $rowIndex. Import aborted at " . now() . " (errors :" . implode(', ', $errors) . ")\n");
-                            return;
-                        }
-
-                        if ($this->errorHandling == 'notSetStu' && $errors) {
-                            Log::warning("Skipping institute at row $rowIndex due to errors: " . implode(', ', $errors));
-                            Storage::append('upload_log_institute.txt', "Errors found at row $rowIndex. Import aborted at " . now() . " (errors :" . implode(', ', $errors) . ")\n");
-                            continue;
-                        }
-
-                        $country_id = $countries[$row['country']] ?? null;
-                        $user_id = $this->user ? null : ($users[$row['setby']] ?? null);
-
-                        $endTS = '';
-                        $startTS = '';
-                        if (!isset($errors['startts'])) {
-                            $startTS = Jalalian::fromFormat('Y/n/j', $row['startts'])->getTimestamp();
-                        }
-                        if (!isset($errors['endts'])) {
-                            $endTS = Jalalian::fromFormat('Y/n/j', $row['endts'])->getTimestamp();
-                        }
-
-                        $instituteData = [
-                            'name' => $row['nameinstitute'],
-                            'country_id' => $country_id,
-                            'city' => $row['city'],
-                            'address' => $row['address'],
-                            'mobile' => $row['mobile'],
-                            'whatsapp' => $row['whatsapp'],
-                            'email' => $row['email'],
-                            'admin' => $row['admin'],
-                            'adminmail' => $row['adminmail'],
-                            'interface' => $row['interface'],
-                            'interfacemail' => $row['interfacemail'],
-                            'AboutInstitute' => $row['aboutinstitute'],
-                            'description' => $row['description'],
-                            'classInstituteType_s' => $row['typeinstitute'],
-                            'modelinstitute' => $row['modelinstitute'],
-                            'ActivityInstitute_s' => $row['activity'],
-                            'contacts' => $row['contacts'],
-                            'religious_s' => $row['religion'],
-                            'religion2_s' => $row['religion2'],
-                            'language_s' => $row['language'],
-                            'AssessmentInstitute_s' => $row['assessment'],
-                            'company' => $row['company'],
-                            'support' => $row['support'],
-                            'supportinterface' => $row['supportinterface'],
-                            'timeinterface' => $row['timeinterface'],
-                            'resultinterface' => $row['resultinterface'],
-                            'user_id' => $user_id,
-                            'startTS' => $startTS,
-                            'endTS' => $endTS,
-                            'excel' => 1,
-                        ];
-
-                        if ($this->errorHandling == 'set' && $errors) {
-                            foreach ($errors as $field => $error) {
-                                unset($instituteData[$field]);
-                            }
-                        }
-
-                        Institute::create($instituteData);
-
-                        Log::info("Institute at row $rowIndex successfully imported.");
-                        Storage::append('upload_log_institute.txt',"----Institute at row $rowIndex successfully imported at " . now() . "\n");
-                    } catch (Exception $e) {
-                        Log::error("Failed to import institute at row $rowIndex: " . $e->getMessage());
-                        Storage::append('upload_log_institute.txt', "Failed to import institute at row $rowIndex: " . $e->getMessage() . " at " . now() . "\n");
-                    }
+            if (!$row['nameinstitute']) $errors['nameinstitute'] = 'نام مؤسسه نامعتبر است';
+            if (!$row['country']) $errors['country'] = 'کشور نامعتبر است';
+            if (!$row['city']) $errors['city'] = 'شهر نامعتبر است';
+            if (!$row['address']) $errors['address'] = 'آدرس نامعتبر است';
+            if (!$row['mobile']) $errors['mobile'] = 'شماره موبایل نامعتبر است';
+            if (!$row['whatsapp']) $errors['whatsapp'] = 'واتساپ نامعتبر است';
+            if (!$row['email']) $errors['email'] = 'ایمیل نامعتبر است';
+            if (!$row['admin']) $errors['admin'] = 'نام مدیر نامعتبر است';
+            if (!$row['adminmail']) $errors['adminmail'] = 'ایمیل مدیر نامعتبر است';
+            if (!$row['interface']) $errors['interface'] = 'واسط نامعتبر است';
+            if (!$row['interfacemail']) $errors['interfacemail'] = 'ایمیل واسط نامعتبر است';
+            if (!$row['aboutinstitute']) $errors['aboutinstitute'] = 'اطلاعات درباره مؤسسه نامعتبر است';
+            if (!$row['description']) $errors['description'] = 'توضیحات نامعتبر است';
+            if (!$row['typeinstitute']) $errors['typeinstitute'] = 'نوع مؤسسه نامعتبر است';
+            if (!$row['modelinstitute']) $errors['modelinstitute'] = 'مدل مؤسسه نامعتبر است';
+            if (!$row['activity']) $errors['activity'] = 'فعالیت نامعتبر است';
+            if (!$row['contacts']) $errors['contacts'] = 'تماس‌ها نامعتبر است';
+            if (!$row['religion']) $errors['religion'] = 'دین نامعتبر است';
+            if (!$row['religion2']) $errors['religion2'] = 'دین دوم نامعتبر است';
+            if (!$row['language']) $errors['language'] = 'زبان نامعتبر است';
+            if (!$row['assessment']) $errors['assessment'] = 'ارزیابی نامعتبر است';
+            if (!$row['company']) $errors['company'] = 'شرکت نامعتبر است';
+            if (!$row['support']) $errors['support'] = 'پشتیبانی نامعتبر است';
+            if (!$row['supportinterface']) $errors['supportinterface'] = 'واسط پشتیبانی نامعتبر است';
+            if (!$row['timeinterface']) $errors['timeinterface'] = 'زمان واسط نامعتبر است';
+            if (!$row['resultinterface']) $errors['resultinterface'] = 'نتیجه واسط نامعتبر است';
+            if (!$this->user && !$row['setby']) $errors['setby'] = 'تنظیم‌کننده نامعتبر است';
+            if (!$row['startts']) {
+                $errors['startts'] = 'زمان شروع نامعتبر است';
+            } else {
+                try {
+                    Jalalian::fromFormat('Y/n/j', $row['startts'])->getTimestamp();
+                } catch (Exception $e) {
+                    $errors['startts'] = 'فرمت زمان شروع نامعتبر است';
                 }
-            });
+            }
+            if (!$row['endts']) {
+                $errors['endts'] = 'زمان پایان نامعتبر است';
+            } else {
+                try {
+                    Jalalian::fromFormat('Y/n/j', $row['endts'])->getTimestamp();
+                } catch (Exception $e) {
+                    $errors['endts'] = 'فرمت زمان پایان نامعتبر است';
+                }
+            }
+
+            $now = Jalalian::now()->format('Y/m/d H:i:s');
+
+            if ($this->errorHandling == 'notSetAll' && $errors) {
+                //Log::error("خطاهایی در ردیف یافت شد: " . implode(', ', $errors));
+                Storage::append('upload_log_institute.txt', "خطاهایی در ردیف " . $this->lineNumber . " یافت شد. ایمپورت در " . $now . " متوقف شد (خطاها: " . implode(', ', $errors) . ")\n");
+                $this->lineNumber++;
+                return null;
+            }
+
+            if ($this->errorHandling == 'notSetStu' && $errors) {
+                //Log::warning("دانشجو در ردیف " . $lineNumber . " به دلیل وجود خطاها رد شد: " . implode(', ', $errors));
+                Storage::append('upload_log_institute.txt', "خطاهایی در ردیف " . $this->lineNumber . " یافت شد. ایمپورت در " . $now . " متوقف شد (خطاها: " . implode(', ', $errors) . ")\n");
+                $this->lineNumber++;
+                return null;
+            }
+
+            $country_id = $this->countries[$row['country']] ?? null;
+            $user_id = '';
+            if (!$this->user) {
+                if ($row['setby']) {
+                    $user_id = $this->users[$row['setby']] ?? null;
+                }
+            }
+
+            $endTS = '';
+            $startTS = '';
+            if (!isset($errors['startts'])) {
+                $startTS = Jalalian::fromFormat('Y/n/j', $row['startts'])->getTimestamp();
+            }
+            if (!isset($errors['endts'])) {
+                $endTS = Jalalian::fromFormat('Y/n/j', $row['endts'])->getTimestamp();
+            }
+
+            $instituteData = [
+                'name' => $row['nameinstitute'],
+                'country_id' => $country_id,
+                'city' => $row['city'],
+                'address' => $row['address'],
+                'mobile' => $row['mobile'],
+                'whatsapp' => $row['whatsapp'],
+                'email' => $row['email'],
+                'admin' => $row['admin'],
+                'adminmail' => $row['adminmail'],
+                'interface' => $row['interface'],
+                'interfacemail' => $row['interfacemail'],
+                'AboutInstitute' => $row['aboutinstitute'],
+                'description' => $row['description'],
+                'classInstituteType_s' => $row['typeinstitute'],
+                'modelinstitute' => $row['modelinstitute'],
+                'ActivityInstitute_s' => $row['activity'],
+                'contacts' => $row['contacts'],
+                'religious_s' => $row['religion'],
+                'religion2_s' => $row['religion2'],
+                'language_s' => $row['language'],
+                'AssessmentInstitute_s' => $row['assessment'],
+                'company' => $row['company'],
+                'support' => $row['support'],
+                'supportinterface' => $row['supportinterface'],
+                'timeinterface' => $row['timeinterface'],
+                'resultinterface' => $row['resultinterface'],
+                'user_id' => $user_id,
+                'startTS' => $startTS,
+                'endTS' => $endTS,
+                'excel' => 1,
+            ];
+
+            if ($this->errorHandling == 'set' && $errors) {
+                foreach ($errors as $field => $error) {
+                    unset($instituteData[$field]);
+                }
+            }
+            //Log::info("Student successfully imported in row: " . $lineNumber);
+            //Storage::append('upload_log.txt', "----Student in row: " . $lineNumber . " successfully imported at " . $now . "\n");
+            $this->lineNumber++;
+            $this->successCount++;
+            return new Institute($instituteData);
+
+        } catch (Exception $e) {
+            Log::error("ایمپورت موسسه با شکست مواجه شد: " . $e->getMessage());
+            Storage::append('upload_log_institute.txt', "ایمپورت موسسه با شکست مواجه شد: " . $e->getMessage() . " در " . $now . "\n");
         }
     }
 
-    private function validateRow($row)
+
+
+    public function batchSize(): int
     {
-        $errors = [];
+        return 1000;
+    }
 
-        if (!$row['nameinstitute']) $errors['nameinstitute'] = 'Invalid nameinstitute';
-        if (!$row['country']) $errors['country'] = 'Invalid country';
-        if (!$row['city']) $errors['city'] = 'Invalid city';
-        if (!$row['address']) $errors['address'] = 'Invalid address';
-        if (!$row['mobile']) $errors['mobile'] = 'Invalid mobile';
-        if (!$row['whatsapp']) $errors['whatsapp'] = 'Invalid whatsapp';
-        if (!$row['email']) $errors['email'] = 'Invalid email';
-        if (!$row['admin']) $errors['admin'] = 'Invalid admin';
-        if (!$row['adminmail']) $errors['adminmail'] = 'Invalid adminmail';
-        if (!$row['interface']) $errors['interface'] = 'Invalid interface';
-        if (!$row['interfacemail']) $errors['interfacemail'] = 'Invalid interfacemail';
-        if (!$row['aboutinstitute']) $errors['aboutinstitute'] = 'Invalid AboutInstitute';
-        if (!$row['description']) $errors['description'] = 'Invalid description';
-        if (!$row['typeinstitute']) $errors['typeinstitute'] = 'Invalid typeinstitute';
-        if (!$row['modelinstitute']) $errors['modelinstitute'] = 'Invalid modelinstitute';
-        if (!$row['activity']) $errors['activity'] = 'Invalid activity';
-        if (!$row['contacts']) $errors['contacts'] = 'Invalid contacts';
-        if (!$row['religion']) $errors['religion'] = 'Invalid religion';
-        if (!$row['religion2']) $errors['religion2'] = 'Invalid religion2';
-        if (!$row['language']) $errors['language'] = 'Invalid language';
-        if (!$row['assessment']) $errors['assessment'] = 'Invalid assessment';
-        if (!$row['company']) $errors['company'] = 'Invalid company';
-        if (!$row['support']) $errors['support'] = 'Invalid support';
-        if (!$row['supportinterface']) $errors['supportinterface'] = 'Invalid supportinterface';
-        if (!$row['timeinterface']) $errors['timeinterface'] = 'Invalid timeinterface';
-        if (!$row['resultinterface']) $errors['resultinterface'] = 'Invalid resultinterface';
-        if (!$this->user && !$row['setby']) $errors['setby'] = 'Invalid setBy';
-        if (!$row['startts']) {
-            $errors['startts'] = 'Invalid startTS';
-        } else {
-            try {
-                Jalalian::fromFormat('Y/n/j', $row['startts'])->getTimestamp();
-            } catch (Exception $e) {
-                $errors['startts'] = 'Invalid format startTS';
-            }
-        }
-        if (!$row['endts']) {
-            $errors['endts'] = 'Invalid endTS';
-        } else {
-            try {
-                Jalalian::fromFormat('Y/n/j', $row['endts'])->getTimestamp();
-            } catch (Exception $e) {
-                $errors['endts'] = 'Invalid format endTS';
-            }
-        }
+    public function chunkSize(): int
+    {
+        return 1000;
+    }
+    public function beforeImport()
+    {
+        Storage::append('upload_log_institute.txt', "فرایند ایمپورت در " . now() . " آغاز شد.\n");
+    }
 
-        return $errors;
+    public function afterImport()
+    {
+        Storage::append('upload_log_institute.txt', "پردازش فایل با موفقیت در " . now() . " انجام شد.\n");
+        Storage::append('upload_log_institute.txt', $this->successCount . " رکورد با موفقیت وارد شدند.\n");
+    }
+
+    public function registerEvents(): array
+    {
+        return [
+            BeforeImport::class => [$this, 'beforeImport'],
+            AfterImport::class => [$this, 'afterImport']
+        ];
     }
 }

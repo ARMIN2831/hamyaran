@@ -103,7 +103,6 @@ class ReportController extends Controller
         $students = $students->get();
         $chartData = $this->chartData($students, $settings);
 
-
         return view('admin.report.chart', compact('countries', 'convenes' , 'students', 'users', 'courses', 'classrooms', 'settings', 'chartData'));
     }
     public function chartData($students, $settings)
@@ -219,10 +218,16 @@ class ReportController extends Controller
         $sexPercent = array_map(fn($count) => round(($count / $sum) * 100), $sex);
 
         $sum = array_sum($religious);
-        $religiousPercent = array_map(fn($count) => round(($count / $sum) * 100) . "%", $religious);
+        $religiousPercent = [];
+        foreach ($religious as $key => $row){
+            $religiousPercent [] = $key."(".round(($row/$sum)*100)."%)";
+        }
 
         $sum = array_sum($religion2);
-        $religion2Percent = array_map(fn($count) => round(($count / $sum) * 100) . "%", $religion2);
+        $religion2Percent = [];
+        foreach ($religion2 as $key => $row){
+            $religion2Percent [] = $key."(".round(($row/$sum)*100)."%)";
+        }
 
         if ($minYear !== PHP_INT_MAX && $maxYear !== PHP_INT_MIN) {
             for ($i = $minYear; $i <= $maxYear; $i++) {

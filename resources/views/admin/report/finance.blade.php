@@ -105,8 +105,8 @@
                                             @foreach($totalUserPrice as $key => $row)
                                                 <tr>
                                                     <td>{{ $key }}</td>
-                                                    <td>{{ $totalUserCommission[$key] }}</td>
-                                                    <td>{{ $row }}</td>
+                                                    <td>{{ $totalUserCommission[$key] }} تومان</td>
+                                                    <td>{{ $row }} تومان</td>
                                                 </tr>
                                             @endforeach
                                         </table>

@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\student\StudentStoreRequest;
 use App\Http\Requests\student\StudentUpdateRequest;
+use App\Imports\StudentsImport;
 use App\Jobs\ImportStudentsJob;
 use App\Models\Country;
 use App\Models\Student;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Maatwebsite\Excel\Facades\Excel;
 use Morilog\Jalali\Jalalian;
 
 class StudentController extends Controller
@@ -147,11 +149,12 @@ class StudentController extends Controller
             'error' => 'required|string',
         ]);
         $filePath = $request->file('file')->storeAs('uploads', 'students.xlsx');
-        Storage::put('upload_log.txt', "File uploaded successfully at " . now() . "\n");
+        Storage::put('upload_log.txt', "فایل با موفقیت در " . now() . " آپلود شد.\n");
 
         Student::where('excel', 1)->update(['excel' => 0]);
 
-        ImportStudentsJob::dispatch($filePath, $request->input('error'),auth()->user()->can('one user'));
+        Excel::import(new StudentsImport($request->input('error'),auth()->user()->can('one user')), $filePath);
+        //ImportStudentsJob::dispatch($filePath, $request->input('error'),auth()->user()->can('one user'));
 
         return redirect()->route('students.upload')->with('success', 'File uploaded and processing started.');
     }

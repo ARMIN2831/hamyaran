@@ -11,17 +11,21 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithBatchInserts;
+use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
+use Maatwebsite\Excel\Events\AfterImport;
+use Maatwebsite\Excel\Events\BeforeImport;
 use Morilog\Jalali\Jalalian;
 
-class StudentsImport implements ShouldQueue,ToModel, WithHeadingRow, WithBatchInserts, WithChunkReading
+class StudentsImport implements ShouldQueue,ToModel, WithHeadingRow, WithBatchInserts, WithChunkReading, WithEvents
 {
     private $errorHandling;
     private $user;
     private $countries;
     private $users;
-    //private $existingMobiles;
+    private $successCount;
+    private $lineNumber;
 
     public function __construct($errorHandling, $user)
     {
@@ -29,7 +33,8 @@ class StudentsImport implements ShouldQueue,ToModel, WithHeadingRow, WithBatchIn
         $this->user = $user;
         $this->countries = Country::pluck('id', 'ISO2')->toArray();
         $this->users = $this->user ? User::pluck('id', 'username')->toArray() : [];
-        //$this->existingMobiles = Student::pluck('mobile')->toArray();
+        $this->successCount = 0;
+        $this->lineNumber = 0;
     }
 
     public function model(array $row)
@@ -38,66 +43,67 @@ class StudentsImport implements ShouldQueue,ToModel, WithHeadingRow, WithBatchIn
         ignore_user_abort(true);
         ini_set('max_execution_time', '60000');
         ini_set('memory_limit', '2048M');
-        static $lineNumber = 1;
         try {
             $errors = [];
 
-            if (!$row['firstname']) $errors['firstname'] = 'Invalid first name';
-            if (!$row['lastname']) $errors['lastname'] = 'Invalid last name';
-            if (!$row['country']) $errors['country'] = 'Invalid country';
-            if (!$row['city']) $errors['city'] = 'Invalid city';
-            if (!$row['nationality']) $errors['nationality'] = 'Invalid nationality';
-            if (!$row['language']) $errors['language'] = 'Invalid language';
-            if (!$row['birthyear']) $errors['birthyear'] = 'Invalid birthYear';
-            if (!$row['sex']) $errors['sex'] = 'Invalid sex';
-            if (!$row['ismarried']) $errors['ismarried'] = 'Invalid isMarried';
-            if (!$row['job']) $errors['job'] = 'Invalid job';
-            if (!$row['education']) $errors['education'] = 'Invalid education';
-            if (!$row['email']) $errors['email'] = 'Invalid email';
-            if (!$row['mobile']) $errors['mobile'] = 'Invalid mobile';
-            if (!$row['religion1']) $errors['religion1'] = 'Invalid religion1';
-            if (!$row['religion2']) $errors['religion2'] = 'Invalid religion2';
-            if (!$row['address']) $errors['address'] = 'Invalid address';
-            if (!$this->user) if (!$row['setby']) $errors['setby'] = 'Invalid setBy';
+            if (!$row['firstname']) $errors['firstname'] = 'نام وارد نشده است';
+            if (!$row['lastname']) $errors['lastname'] = 'نام خانوادگی وارد نشده است';
+            if (!$row['country']) $errors['country'] = 'کشور وارد نشده است';
+            if (!$row['city']) $errors['city'] = 'شهر وارد نشده است';
+            if (!$row['nationality']) $errors['nationality'] = 'ملیت وارد نشده است';
+            if (!$row['language']) $errors['language'] = 'زبان وارد نشده است';
+            if (!$row['birthyear']) $errors['birthyear'] = 'سال تولد وارد نشده است';
+            if (!$row['sex']) $errors['sex'] = 'جنسیت وارد نشده است';
+            if (!$row['ismarried']) $errors['ismarried'] = 'وضعیت تأهل وارد نشده است';
+            if (!$row['job']) $errors['job'] = 'شغل وارد نشده است';
+            if (!$row['education']) $errors['education'] = 'تحصیلات وارد نشده است';
+            if (!$row['email']) $errors['email'] = 'ایمیل وارد نشده است';
+            if (!$row['mobile']) $errors['mobile'] = 'شماره موبایل وارد نشده است';
+            if (!$row['religion1']) $errors['religion1'] = 'دین اول وارد نشده است';
+            if (!$row['religion2']) $errors['religion2'] = 'دین دوم وارد نشده است';
+            if (!$row['address']) $errors['address'] = 'آدرس وارد نشده است';
+            if (!$this->user) if (!$row['setby']) $errors['setby'] = 'تنظیم‌کننده وارد نشده است';
             if (!$row['startts']) {
-                $errors['startts'] = 'Invalid startTS';
+                $errors['startts'] = 'تاریخ شروع وارد نشده است';
             } else {
                 try {
                     Jalalian::fromFormat('Y/n/j', $row['startts'])->getTimestamp();
                 } catch (Exception $e) {
-                    $errors['startts'] = 'Invalid format startTS';
+                    $errors['startts'] = 'فرمت تاریخ شروع نادرست است';
                 }
             }
-            if (!$row['ismanageable']) $errors['ismanageable'] = 'Invalid isManageable';
-            if (!$row['candoact']) $errors['candoact'] = 'Invalid canDoAct';
-            if (!$row['publicrelation']) $errors['publicrelation'] = 'Invalid publicRelation';
-            if (!$row['opinionaboutiran']) $errors['opinionaboutiran'] = 'Invalid opinionAboutIran';
-            if (!$row['donation']) $errors['donation'] = 'Invalid donation';
-            if (!$row['character']) $errors['character'] = 'Invalid character';
-            if (!$row['aboutstudent']) $errors['aboutstudent'] = 'Invalid aboutStudent';
-            if (!$row['skill']) $errors['skill'] = 'Invalid skill';
-            if (!$row['allergie']) $errors['allergie'] = 'Invalid allergie';
-            if (!$row['ext']) $errors['ext'] = 'Invalid ext';
+            if (!$row['ismanageable']) $errors['ismanageable'] = 'وضعیت مدیریت‌پذیری وارد نشده است';
+            if (!$row['candoact']) $errors['candoact'] = 'قابلیت اقدام وارد نشده است';
+            if (!$row['publicrelation']) $errors['publicrelation'] = 'روابط عمومی وارد نشده است';
+            if (!$row['opinionaboutiran']) $errors['opinionaboutiran'] = 'نظر درباره ایران وارد نشده است';
+            if (!$row['donation']) $errors['donation'] = 'کمک مالی وارد نشده است';
+            if (!$row['character']) $errors['character'] = 'ویژگی شخصیت وارد نشده است';
+            if (!$row['aboutstudent']) $errors['aboutstudent'] = 'اطلاعات درباره دانشجو وارد نشده است';
+            if (!$row['skill']) $errors['skill'] = 'مهارت وارد نشده است';
+            if (!$row['allergie']) $errors['allergie'] = 'آلرژی وارد نشده است';
+            if (!$row['ext']) $errors['ext'] = 'مقدار اضافی وارد نشده است';
 
 
             $now = Jalalian::now()->format('Y/m/d H:i:s');
 
             if ($this->errorHandling == 'notSetAll' && $errors) {
-                //Log::error("Errors found in row: " . implode(', ', $errors));
-                Storage::append('upload_log.txt', "Errors found in row " . $lineNumber . " Import aborted at " . $now . " (errors :" . implode(', ', $errors) . ")\n");
-                $lineNumber++;
+                //Log::error("خطاهایی در ردیف یافت شد: " . implode(', ', $errors));
+                Storage::append('upload_log.txt', "خطاهایی در ردیف " . $this->lineNumber . " یافت شد. ایمپورت در " . $now . " متوقف شد (خطاها: " . implode(', ', $errors) . ")\n");
+                $this->lineNumber++;
                 return null;
             }
+
             if ($this->errorHandling == 'notSetStu' && $errors) {
-                //Log::warning("Skipping student in row: ".$lineNumber." due to errors: " . implode(', ', $errors));
-                Storage::append('upload_log.txt', "Errors found in row " . $lineNumber . " Import aborted at " . $now . " (errors :" . implode(', ', $errors) . ")\n");
-                $lineNumber++;
+                //Log::warning("دانشجو در ردیف " . $lineNumber . " به دلیل وجود خطاها رد شد: " . implode(', ', $errors));
+                Storage::append('upload_log.txt', "خطاهایی در ردیف " . $this->lineNumber . " یافت شد. ایمپورت در " . $now . " متوقف شد (خطاها: " . implode(', ', $errors) . ")\n");
+                $this->lineNumber++;
                 return null;
             }
+
             if ($row['mobile'] && Student::where('mobile', $row['mobile'])->exists()) {
-                Log::warning("Skipping student due to duplicate mobile number in row: ".$lineNumber);
-                Storage::append('upload_log.txt', "Skipping student due to duplicate mobile number in row: " . $lineNumber . " Import aborted at " . $now . "\n");
-                $lineNumber++;
+                Log::warning("دانشجو به دلیل تکراری بودن شماره موبایل در ردیف " . $this->lineNumber . " رد شد");
+                Storage::append('upload_log.txt', "دانشجو به دلیل تکراری بودن شماره موبایل در ردیف " . $this->lineNumber . " رد شد. ایمپورت در " . $now . " متوقف شد.\n");
+                $this->lineNumber++;
                 return null;
             }
 
@@ -159,12 +165,13 @@ class StudentsImport implements ShouldQueue,ToModel, WithHeadingRow, WithBatchIn
             }
             //Log::info("Student successfully imported in row: " . $lineNumber);
             //Storage::append('upload_log.txt', "----Student in row: " . $lineNumber . " successfully imported at " . $now . "\n");
-            $lineNumber++;
+            $this->lineNumber++;
+            $this->successCount++;
             return new Student($studentData);
 
         } catch (Exception $e) {
-            Log::error("Failed to import student: " . $e->getMessage());
-            Storage::append('upload_log.txt', "Failed to import student: " . $e->getMessage() . " at " . $now . "\n");
+            Log::error("ایمپورت دانشجو با شکست مواجه شد: " . $e->getMessage());
+            Storage::append('upload_log.txt', "ایمپورت دانشجو با شکست مواجه شد: " . $e->getMessage() . " در " . $now . "\n");
         }
     }
 
@@ -176,5 +183,23 @@ class StudentsImport implements ShouldQueue,ToModel, WithHeadingRow, WithBatchIn
     public function chunkSize(): int
     {
         return 1000;
+    }
+    public function beforeImport()
+    {
+        Storage::append('upload_log.txt', "فرایند ایمپورت در " . now() . " آغاز شد.\n");
+    }
+
+    public function afterImport()
+    {
+        Storage::append('upload_log.txt', "پردازش فایل با موفقیت در " . now() . " انجام شد.\n");
+        Storage::append('upload_log.txt', $this->successCount . " رکورد با موفقیت وارد شدند.\n");
+    }
+
+    public function registerEvents(): array
+    {
+        return [
+            BeforeImport::class => [$this, 'beforeImport'],
+            AfterImport::class => [$this, 'afterImport']
+        ];
     }
 }

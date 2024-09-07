@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\institute\InstituteStoreRequest;
 use App\Http\Requests\institute\InstituteUpdateRequest;
+use App\Imports\InstitutesImport;
 use App\Jobs\ImportInstitutesJob;
 use App\Jobs\ImportStudentsJob;
 use App\Models\Convene;
@@ -13,6 +14,7 @@ use App\Models\Student;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Maatwebsite\Excel\Facades\Excel;
 use Morilog\Jalali\Jalalian;
 
 class InstituteController extends Controller
@@ -138,15 +140,16 @@ class InstituteController extends Controller
     public function uploadExcel(Request $request)
     {
         $request->validate([
-            'file' => 'required|mimes:xlsx|max:1024',
+            'file' => 'required|mimes:xlsx',
             'error' => 'required|string',
         ]);
         $filePath = $request->file('file')->storeAs('uploads', 'institute.xlsx');
-        Storage::put('upload_log_institute.txt', "File uploaded successfully at " . now() . "\n");
+        Storage::put('upload_log_institute.txt', "فایل با موفقیت در " . now() . " آپلود شد.\n");
 
         Institute::where('excel', 1)->update(['excel' => 0]);
 
-        ImportInstitutesJob::dispatch($filePath, $request->input('error'),auth()->user()->can('one user'));
+        //ImportInstitutesJob::dispatch($filePath, $request->input('error'),auth()->user()->can('one user'));
+        Excel::import(new InstitutesImport($request->input('error'),auth()->user()->can('one user')), $filePath);
 
         return redirect()->route('institutes.upload')->with('success', 'File uploaded and processing started.');
     }

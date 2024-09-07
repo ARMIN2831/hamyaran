@@ -28,7 +28,7 @@
                             <div class="row">
                                 <h4 class="card-title">فیلترهای گزارش</h4>
                                 &nbsp;&nbsp;&nbsp;&nbsp;
-                                <a href="{{ env('APP_URL') }}/export/#table" class="btn btn-primary">هدایت به جدول</a>
+                                <a href="{{ route('report.export') }}/#table" class="btn btn-primary">هدایت به جدول</a>
                                 &nbsp;&nbsp;&nbsp;&nbsp;
                                 <a id="excel-button" class="btn btn-outline-warning">دریافت گزارش اکسل</a>
                             </div>
